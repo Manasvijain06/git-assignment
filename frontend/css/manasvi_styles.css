@@ -1,28 +1,58 @@
 /* CSS Styling Enhancement for Manasvi's Portfolio */
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 /* Body styling */
-body{
+body {
     font-family: Arial, sans-serif;
     background-color: #f5f7fa;
     color: #333;
 }
+
 /*=================
 Header Styling
 =================*/
-header{
-    background-color:#0077b6;
+header {
+    background-color: #0077b6;
     color: white;
     padding: 20px 0;
     text-align: center;
 }
+
 /* Profile image styling */
 header img {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* this makes image circular */
+    border-radius: 50%;
+    /* this makes image circular */
     margin-top: 10px;
+}
+
+/*=================
+Navigation Styling
+=================*/
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    background-color: #023e8a;
+
+}
+/*space between nav items*/
+nav ul li {
+    padding:15px;
+}
+/*nav link styling*/
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+/*nav link hover effect*/
+nav ul li a:hover {
+    color: yellow;
 }
