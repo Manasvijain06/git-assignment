@@ -10,3 +10,18 @@ body{
     background-color: #f5f7fa;
     color: #333;
 }
+/*=================
+Header Styling
+=================*/
+header{
+    background-color:#0077b6;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+header img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* makes image circular */
+    margin-top: 10px;
+}
