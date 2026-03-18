@@ -213,3 +213,21 @@ form input[type="submit"]:hover {
     background-color: #023e8a;
 }
 
+/*=================
+Footer Styling          
+=================*/
+
+footer {
+    text-align: center;
+    background-color: #0077b6;
+    color: white;
+    font-size: 14px;
+    padding: 15px;
+}
+
+/* Footer links */
+footer a {
+    color: yellow;
+    margin: 0 10px;
+    text-decoration: none;
+}
