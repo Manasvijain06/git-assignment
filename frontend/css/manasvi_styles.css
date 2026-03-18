@@ -178,3 +178,38 @@ project section styling
 #projects a:hover {
     color: red;
 }
+
+/*=================
+form section styling
+=================*/
+
+/* Label alignment */
+form label {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Input fields */
+form input, 
+form textarea, 
+form select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+/* Submit button */
+form input[type="submit"] {
+    margin-top: 10px;
+    background-color: #0077b6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Hover on button */
+form input[type="submit"]:hover {
+    background-color: #023e8a;
+}
+
