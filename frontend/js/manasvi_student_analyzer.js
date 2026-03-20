@@ -56,3 +56,22 @@ students.forEach(student => {
   const avg = calculateAverage(student);
   console.log(student.name + " Average Marks: " + avg);
 });
+
+/*Subject with highest score */
+subjects.forEach(function(sub){
+    let highestScore = 0;
+    let topScorer = "";
+
+    students.forEach(function(student){
+        student.marks.forEach(function(mark){
+            
+            // check if the subject matches and if the score is higher than the current highest score
+            if(mark.subject === sub && mark.score > highestScore){
+                highestScore = mark.score;
+                topScorer = student.name;
+            }
+        });
+    });
+    // print the highest score and the top scorer for the subject
+    console.log("Highest score in " + sub + " is " + highestScore + " by " + topScorer);
+});
