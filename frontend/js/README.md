@@ -15,17 +15,17 @@ The program analyzes student performance and calculates different results like t
 
 ## 📂 Project Structure
 frontend/
- ├── js/
- │    └── manasvi_student_analyzer.js
- ├── images/
- │    ├── Average_marks.png
- │    ├── Grade_logic.png
- │    ├── Student_Data.png
- │    ├── SubWise_AvgScore.png
- │    ├── SubWise_HighestScore.png
- │    ├── Total_Marks.png
- │    ├── class_Topper.png
- ├── README.md
+├── js/
+│   └── manasvi_student_analyzer.js
+├── images/
+│   ├── Average_marks.png
+│   ├── Grade_logic.png
+│   ├── Student_Data.png
+│   ├── SubWise_AvgScore.png
+│   ├── SubWise_HighestScore.png
+│   ├── Total_Marks.png
+│   └── class_Topper.png
+└── README.md
 
 ---
 
@@ -36,34 +36,40 @@ frontend/
 
 Adding the student data including Name, Subject, Marks(per subject) and attendance
 
+---
+
 ### 2. Total Marks
 ![Total](https://github.com/Manasvijain06/Assignments/blob/27b1aee1e6aff9e49949d3286825359323aba5e0/frontend/js/Screenshots/Total_Marks.png)
 
-This output shows the total marks of each student by adding all subject scores.
+Total marks are calculated by looping through each subject's scores and adding them together using a for loop inside a function.
 
 ---
 
 ### 3. Average Marks
 ![Average](https://github.com/Manasvijain06/Assignments/blob/27b1aee1e6aff9e49949d3286825359323aba5e0/frontend/js/Screenshots/Average_marks.png)
+
 Here, the average marks are calculated by dividing total marks by number of subjects.
 
 ---
 
 ### 4. Subject-wise Highest
 ![Highest](https://github.com/Manasvijain06/Assignments/blob/27b1aee1e6aff9e49949d3286825359323aba5e0/frontend/js/Screenshots/SubWise_HighestScore.png)
-This shows which student scored the highest in each subject.
+
+The highest score for each subject is found by looping through all students and comparing their marks. The highest score and student name are updated whenever a higher value is found.
 
 ---
 
 ### 5. Subject-wise Average
 ![Subject Avg](https://github.com/Manasvijain06/Assignments/blob/27b1aee1e6aff9e49949d3286825359323aba5e0/frontend/js/Screenshots/SubWise_AvgScore.png)
 This output displays the average score of each subject across all students.
+It is done by dividing the totalScore by count.
 
 ---
 
 ### 6. Class Topper
 ![Topper](https://github.com/Manasvijain06/Assignments/blob/27b1aee1e6aff9e49949d3286825359323aba5e0/frontend/js/Screenshots/class_Topper.png)
 This shows the student who got the highest total marks in the class.
+It is done by using if comdition and comparing values.
 
 ---
 
