@@ -99,3 +99,21 @@ subjects.forEach(function(sub) {
   // print average
   console.log("Average score in " + sub + " is " + average);
 });
+
+/*Determine class topper */
+function getTopper(students) {
+  let topper = null;
+  let highestMarks = 0;
+
+  students.forEach(student => {
+    const total = calculateTotalMarks(student);
+
+    if (total > highestMarks) {
+      highestMarks = total;
+      topper = student.name;
+    }
+  });
+
+  console.log(`Class Topper: ${topper} with ${highestMarks} marks`);
+}
+getTopper(students);
