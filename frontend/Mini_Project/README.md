@@ -55,6 +55,7 @@ This structured approach ensures better readability, maintainability, and scalab
 
 
 *Figure: Basic HTML layout of the Product Inventory Dashboard*
+
 ![main structure](https://github.com/Manasvijain06/Assignments/blob/4c0c33f174c0860d01066ca57be72677c5b5a85c/frontend/Mini_Project/screenshots/Html_Structure.png)
 
 ---
@@ -74,17 +75,17 @@ This structured approach ensures better readability, maintainability, and scalab
 * Users can add new products using a form.
 * Includes validation for name, price, stock, and category.
 
-📸 Screenshot:
+
 ![Add Product](https://github.com/Manasvijain06/Assignments/blob/4c0c33f174c0860d01066ca57be72677c5b5a85c/frontend/Mini_Project/screenshots/Add_Product.png)
 
 ---
 
-### 🔹 3. Edit Product
+### 3. Edit Product
 
 * Edit button pre-fills the form with existing product data.
 * Allows updating product details easily.
 
-📸 Screenshot:
+
 ![Edit Product](https://github.com/Manasvijain06/Assignments/blob/4c0c33f174c0860d01066ca57be72677c5b5a85c/frontend/Mini_Project/screenshots/Edit_product.png)
 
 ---
@@ -107,10 +108,12 @@ This structured approach ensures better readability, maintainability, and scalab
 
 ---
 
-### 6. Filter Functionality
+### 6. search by categories
 
 * Filter products by category.
-* Filter low stock items.
+* Inculding all categories with individual too.
+
+![category](https://github.com/Manasvijain06/Assignments/blob/90db3227f8cd2caa69388ecffd4d39b430a80289/frontend/Mini_Project/screenshots/category.png)
 
 
 
@@ -127,7 +130,7 @@ This structured approach ensures better readability, maintainability, and scalab
 
 ---
 
-### 🔹 8. Pagination
+### 8. Pagination
 
 * Displays limited products per page.
 * Improves UI performance and usability.
@@ -153,17 +156,16 @@ Displays:
 
 ---
 
-### 🔹 11. Loading Spinner
+### 11. Loading Spinner
 
 * Shows loading animation during initialization.
 * Disables inputs temporarily.
 
-📸 Screenshot:
 ![Spinner](https://github.com/Manasvijain06/Assignments/blob/4c0c33f174c0860d01066ca57be72677c5b5a85c/frontend/Mini_Project/screenshots/load_Spinner.png)
 
 ---
 
-### 🔹 12. Empty State Handling
+### 12. Empty State Handling
 
 * Displays message when no products are found.
 
@@ -171,7 +173,7 @@ Displays:
 
 ---
 
-### 🔹 13. Responsive Design
+###  13. Responsive Design
 
 * Fully responsive UI for mobile and desktop.
 
