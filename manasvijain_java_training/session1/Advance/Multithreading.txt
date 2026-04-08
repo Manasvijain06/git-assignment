@@ -1,0 +1,79 @@
+4. Explore multithreading in Java to perform multiple tasks concurrently.
+
+Ans--> Multithreading is a process of executing multiple threads simultaneously.
+A thread is a lightweight sub-process, a small unit of a process.
+Multithreading helps in performing multiple tasks concurrently, improving efficiency, responsiveness, and performance.
+
+Advantages of Multithreading
+Better CPU utilization – multiple threads can run concurrently.
+Improved performance – tasks can execute in parallel.
+Responsiveness – GUI applications remain responsive while performing background tasks.
+Resource sharing – threads share memory within the same process.
+
+Ways to Create Threads in Java--
+1.By extending the Thread class
+2.By implementing the Runnable interface
+
+Example 1 – Extending Thread Class
+class Task1 extends Thread {
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println("Task1 - Count: " + i);
+            try { Thread.sleep(500); } catch (InterruptedException e) {}
+        }
+    }
+}
+
+class Task2 extends Thread {
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println("Task2 - Count: " + i);
+            try { Thread.sleep(500); } catch (InterruptedException e) {}
+        }
+    }
+}
+
+public class MultithreadingDemo {
+    public static void main(String[] args) {
+        Task1 t1 = new Task1();
+        Task2 t2 = new Task2();
+
+        t1.start(); // Start thread 1
+        t2.start(); // Start thread 2
+    }
+}
+----------------------------------------------------------------------
+Example 2 – Implementing Runnable Interface
+
+class Task implements Runnable {
+    private String name;
+
+    Task(String name) {
+        this.name = name;
+    }
+
+    public void run() {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(name + " - Count: " + i);
+            try { Thread.sleep(500); } 
+            catch (InterruptedException e) {}
+        }
+    }
+}
+
+public class MultithreadingRunnableDemo {
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new Task("Task1"));
+        Thread t2 = new Thread(new Task("Task2"));
+
+        t1.start();
+        t2.start();
+    }
+}
+
+It can perform multiple tasks concurrently because:
+
+In Java, the CPU scheduler allocates time to each thread.
+Threads appear to run simultaneously, but:
+On a single-core CPU, threads take turns very quickly (time-slicing), making tasks seem concurrent.
+On multiple CPU cores, threads can actually run in parallel, performing multiple tasks at the same time.
