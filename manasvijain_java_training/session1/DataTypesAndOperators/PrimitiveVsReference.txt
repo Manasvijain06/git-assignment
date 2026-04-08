@@ -1,0 +1,44 @@
+1.  Explain the difference between primitive and reference data types with examples.
+
+Ans --> In Java, Data types are mainly divided into primitive and reference data types.
+
+  Primitive data types store simple values directly in memory and are predefined by the language, such as integers, characters, and boolean values. They are faster and use less memory.
+  On the other hand, reference data types store the address (reference) of the object rather than the actual value. These include arrays, classes, and strings. Reference types are used to handle complex data and allow multiple variables to refer to the same object.
+
+ | Primitive             | Reference                   |
+ |-----------------------|---------------------------- |
+ | stores actual value   | Stores address of the object|
+ | less memory           | More memory                 |
+ | faster                | Slightly slower             |
+ | cannot be null        | can be null                 |
+ | int,float,char,boolean| String,array,objects        |
+
+  For example --
+
+  int a = 100;  // Primitive Datatype (stores value directly)
+
+  String name = 'Manasvi'; // Reference Datatype (stores address of object)
+
+  code for understanding -->
+  public class example{
+    public static  void main(String[] args){
+        //primitive 
+        int a = 10;
+        int b = a;
+        b = 20 ;
+
+        System.out.println("a =" +a ); //10
+        System.out.println("b =" +b ); //20
+
+        //Reference
+        int[] arr1 = {1,2,3};
+        int[] arr2 = arr1;
+        arr[0] = 99;
+
+        System.out.println("arr1[0] = " +arr1[0]); //99
+        System.out.println("arr2[0] = " +arr2[0] ); //99
+    }
+  }
+
+  In primitive data type, the value is copied and changing one variable does not affect the other. 
+  In Reference data type, the reference(address) is copied so both variables point to the same memory location and changes made in one will affect to another.
