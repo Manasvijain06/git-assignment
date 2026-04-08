@@ -1,0 +1,90 @@
+1. Explain the concept of interfaces and abstract classes with examples. Create a program to handle exceptions using try-catch blocks.
+
+Ans --> An interface in Java is a reference type, similar to a class, that can contain only constants, method signatures (abstract methods), default methods, static methods, and nested types.
+It defines a contract — “what a class should do,” without specifying “how to do it.”
+Any class that implements an interface must provide concrete implementations for all its abstract methods.
+
+Key Features of Interfaces -->
+All methods are abstract by default (unless declared default or static).
+Variables are public, static, and final by default (constants).
+No object of interface can be created directly.
+A class can implement multiple interfaces (achieves multiple inheritance).
+From Java 8 onward, interfaces can have default and static methods with implementation.
+
+// Example
+
+interface Vehicle {
+    void start();  // abstract method
+    void stop();
+}
+
+class Car implements Vehicle {
+    public void start() {
+        System.out.println("Car started");
+    }
+
+    public void stop() {
+        System.out.println("Car stopped");
+    }
+}
+
+public class InterfaceDemo {
+    public static void main(String[] args) {
+        Car myCar = new Car();
+        myCar.start();
+        myCar.stop();
+    }
+}
+-------------------------------------------------------------------------
+An abstract class in Java is a class that cannot be instantiated directly.
+
+It can contain:
+Abstract methods – methods without a body (only declaration).
+Concrete methods – methods with an implementation (code).
+Abstract classes are used to define a template or blueprint for a group of related classes.
+
+Abstract classes allow you to define common behavior for subclasses while forcing them to implement specific methods.
+
+Purpose of Abstract Classes --
+Code Reusability: You can define shared methods in the abstract class, and all subclasses inherit them.
+Enforcing a Contract: You can declare abstract methods, which must be implemented by subclasses.
+Polymorphism: Abstract class references can point to subclass objects, allowing flexible code design.
+Template Design: Helps in designing a structured and consistent hierarchy of related classes.
+
+Example
+
+abstract class Animal {
+    // Abstract method (must be implemented by subclass)
+    abstract void sound();
+
+    // Concrete method (shared by all animals)
+    void sleep() {
+        System.out.println("Animal is sleeping");
+    }
+}
+
+class Dog extends Animal {
+    // Implement abstract method
+    void sound() {
+        System.out.println("Dog barks");
+    }
+}
+
+class Cat extends Animal {
+    void sound() {
+        System.out.println("Cat meows");
+    }
+}
+
+public class AbstractClassDemo {
+    public static void main(String[] args) {
+        Animal dog = new Dog(); // Abstract class reference
+        Animal cat = new Cat();
+
+        dog.sound(); // Dog barks
+        dog.sleep(); // Animal is sleeping
+
+        cat.sound(); // Cat meows
+        cat.sleep(); // Animal is sleeping
+    }
+}
