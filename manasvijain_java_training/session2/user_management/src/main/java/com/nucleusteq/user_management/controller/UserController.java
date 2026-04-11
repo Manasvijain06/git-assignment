@@ -29,15 +29,17 @@ public class UserController {
         return service.getAllUsers();
     }
 
+    // GET /users/{id}
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable int id) {
+        return service.getUserById(id);
+    }
+
     // POST /users
     @PostMapping
     public User createUser(@RequestBody User user) {
         return service.createUser(user);
     }
 
-    // GET /users/{id}
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable int id) {
-        return service.getUserById(id);
-    }
+    
 }

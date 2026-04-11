@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.nucleusteq.user_management.exception.DuplicateUserException;
+import com.nucleusteq.user_management.exception.UserNotFoundException;
 import com.nucleusteq.user_management.model.User;
 import com.nucleusteq.user_management.repository.UserRepository;
 
@@ -12,24 +14,26 @@ public class UserService {
 
     private final UserRepository repository;
 
-    // Constructor Injection (MANDATORY)
     public UserService(UserRepository repository) {
         this.repository = repository;
     }
 
-    // Get all users
     public List<User> getAllUsers() {
         return repository.findAll();
     }
 
-    // Get user by ID
     public User getUserById(int id) {
-        return repository.findById(id);
+        return repository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found"));
     }
 
-    // Create user
     public User createUser(User user) {
+
+        if (repository.existsById(user.getId())) {
+            throw new DuplicateUserException("User with ID " + user.getId() + " already exists");
+        }
         repository.save(user);
-        return user;
+
+        return user; 
     }
 }
