@@ -1,7 +1,6 @@
 package com.nucleusteq.user_management.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +16,8 @@ public class NotificationController {
         this.service = service;
     }
 
-    @GetMapping("/{name}")
-    public String sendNotification(@PathVariable String name) {
-        return service.triggerNotification(name);
+    @GetMapping
+    public String sendNotification() {
+        return service.triggerNotification();
     }
 }

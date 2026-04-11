@@ -13,7 +13,7 @@ public class NotificationService {
         this.component = component;
     }
 
-    public String triggerNotification(String name) {
-        return component.sendNotification(name);
+    public String triggerNotification() {
+        return component.sendNotification();
     }
 }
