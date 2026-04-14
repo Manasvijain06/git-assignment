@@ -27,9 +27,13 @@ public class UserRepository {
                 .filter(user -> (age == null || user.getAge() == age)) //exact match for age
                 .filter(user -> (role == null || user.getRole().equalsIgnoreCase(role)))
                 .collect(Collectors.toList());
-     }
+    }
 
     public List<User> findAll() {
         return users;
+    }
+    //update file with Adding delete method 
+    public boolean deleteById(int id) {
+    return users.removeIf(user -> user.getId() == id);
     }
 }
