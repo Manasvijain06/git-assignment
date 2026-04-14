@@ -20,6 +20,20 @@ public class UserService {
             return repository.findAll();
         }
         return repository.searchUsers(name, age, role);
-     }
+    }
+    // updating file by adding delete method in service layer
+    public String deleteUser(int id, Boolean confirm) {
+        if (confirm == null || !confirm) {
+            return "Confirmation required";
+    }
 
+    boolean isDeleted = repository.deleteById(id);
+
+    if (isDeleted) {
+        return "User deleted successfully";
+    } 
+    else {
+        return "User not found";
+    }
+    }
 }
