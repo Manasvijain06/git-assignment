@@ -1,13 +1,13 @@
-package com.nucleusteq1.SpringAndRest;
+package com.Nucleusteq.SpringAndRestAssignment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringAndRestApplication {
+public class SpringAndRestAssignmentApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringAndRestApplication.class, args);
+		SpringApplication.run(SpringAndRestAssignmentApplication.class, args);
 	}
 
 }

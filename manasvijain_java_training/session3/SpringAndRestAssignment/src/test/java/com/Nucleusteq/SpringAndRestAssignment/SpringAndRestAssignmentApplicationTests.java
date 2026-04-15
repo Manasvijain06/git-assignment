@@ -1,10 +1,10 @@
-package com.nucleusteq1.SpringAndRest;
+package com.Nucleusteq.SpringAndRestAssignment;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringAndRestApplicationTests {
+class SpringAndRestAssignmentApplicationTests {
 
 	@Test
 	void contextLoads() {
