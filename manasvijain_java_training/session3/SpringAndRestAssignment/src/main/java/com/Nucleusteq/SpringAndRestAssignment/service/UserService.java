@@ -31,8 +31,8 @@ public class UserService {
         return result;
     }
 
-     //DELETE (NEW API)
-     
+     // DELETE (NEW API)
+
      public String deleteUser(int id, Boolean confirm) {    
         if (confirm == null || !confirm) {
             throw new InvalidUserException("Please confirm deletion");
