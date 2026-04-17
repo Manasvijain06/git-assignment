@@ -20,6 +20,7 @@ public class TodoRequestDTO {
     public String getStatus() {
         return status;
     }
+    
 
     //All setters
     public void setTitle(String title) {
