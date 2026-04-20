@@ -135,6 +135,7 @@ public class TodoServiceTest {
         assertThrows(TodoNotFoundException.class,
                 () -> todoService.getById(1L));
     }
+    
     // ================= UPDATE =================
 
     @Test
@@ -163,7 +164,7 @@ public class TodoServiceTest {
     }
 
     // ================= DELETE =================
-    
+
     @Test
     void testDelete() {
 
