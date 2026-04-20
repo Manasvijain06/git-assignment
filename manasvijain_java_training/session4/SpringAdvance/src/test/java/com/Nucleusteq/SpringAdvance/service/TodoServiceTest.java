@@ -59,6 +59,7 @@ public class TodoServiceTest {
     }
 
    // ================= CREATE =================
+   
     @Test
     void testCreateTodo() {
         TodoRequestDTO dto = createRequest("Task 1", "PENDING");
@@ -135,7 +136,7 @@ public class TodoServiceTest {
         assertThrows(TodoNotFoundException.class,
                 () -> todoService.getById(1L));
     }
-    
+
     // ================= UPDATE =================
 
     @Test
