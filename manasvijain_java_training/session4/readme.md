@@ -2,8 +2,19 @@
 
 ## 🚀 Overview
 
-This is a **Spring Boot-based TODO Management Application** developed as part of the **Spring Advance Assignment**.
+This is a Spring Boot-based TODO Management Application developed as part of the Enterprise Flow & Testing Assignment (Session 4 & Session 5).
 The project demonstrates key backend concepts such as **REST APIs, layered architecture, JPA (Hibernate), DTO pattern, validation, and exception handling**.
+
+The project demonstrates key backend concepts such as:
+REST API Development
+Layered Architecture
+JPA (Hibernate)
+DTO Pattern
+Validation
+Exception Handling
+Logging
+Unit Testing (JUnit + Mockito)
+External Service Simulation
 
 ---
 
@@ -14,6 +25,7 @@ The project demonstrates key backend concepts such as **REST APIs, layered archi
 * Spring Data JPA (Hibernate)
 * PostgreSQL
 * Maven
+* JUnit & Mockito
 * Postman / Thunder Client
 
 ---
@@ -38,6 +50,7 @@ java/session4/SpringAdvance
       │
       ├── service
       │     └── TodoService.java
+      |     └── NotificationServiceClient.java   <-- NEW
       │
       ├── repository
       │     └── TodoRepository.java
@@ -57,18 +70,22 @@ java/session4/SpringAdvance
 
 ---
 
-## 📌 Features
+## 📌 Features (Assignment 4)
+Core Features
+Create TODO
+Get all TODOs
+Get TODO by ID
+Update TODO
+Delete TODO
 
-1.Create TODO
-2.Get all TODOs
-3.Get TODO by ID
-4. Update TODO
-5. Delete TODO
-6. DTO-based architecture (no entity exposure)
-7. Validation using `@Valid`
-8. Global Exception Handling
-9. Status transition rules enforced
-10. PostgreSQL database integration
+Advanced Features (Assignment 5)
+ SLF4J Logging (Controller + Service)
+ Unit Testing using JUnit & Mockito
+ Dummy External Service (NotificationServiceClient)
+ DTO-based architecture
+ Validation using @Valid
+ Global Exception Handling
+ Status transition rules enforced
 
 ---
 
@@ -102,7 +119,13 @@ java/session4/SpringAdvance
 ```
 POST /todos
 ```
-![create](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/create(post).png)
+![create](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/Create.png)
+
+Default status
+![status](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/DefaultStatus.png)
+
+Invalid Status
+![invalid](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/invalidStatus.png)
 
 ---
 
@@ -111,7 +134,8 @@ POST /todos
 ```
 GET /todos
 ```
-![Get All](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/getAll.png)
+![Get All](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/getAll.png)
+
 ---
 
 ### 🔹 3. Get TODO by ID
@@ -119,7 +143,8 @@ GET /todos
 ```
 GET /todos/{id}
 ```
-![by id](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/GetById.png)
+![Get by id](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/GetById.png)
+
 ---
 
 ### 🔹 4. Update TODO
@@ -127,19 +152,23 @@ GET /todos/{id}
 ```
 PUT /todos/{id}
 ```
-![put](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/update.png)
+![put](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/update.png)
+
+Update Not Found
+
+![NotFound](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/UpdateNotFound.png)
 
 ---
-
 ### 🔹 5. Delete TODO
 
 ```
 DELETE /todos/{id}
 ```
-![delete](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/delete.png)
+![delete](https://github.com/Manasvijain06/Assignments/blob/dd7dab1b861d6f34d410b32e788e47955a5a5662/manasvijain_java_training/session4/SpringAdvance/Screenshot/delete.png)
+
 ---
-### ID auto create and primary 
-![id](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/autoCreateAt.png)
+
+
 
 ## 🔄 Status Transition Rules
 
@@ -161,6 +190,45 @@ Handled using `@RestControllerAdvice`:
 * Validation Errors → 400
   
 ![not found](https://github.com/Manasvijain06/Assignments/blob/e5d909ddd23cb5a11e9e87ddae3ae814f4167ca1/manasvijain_java_training/session4/SpringAdvance/Screenshot/TodoNotFound.png)
+
+---
+
+## Logging (MANDATORY)
+
+Logging implemented using SLF4J Logger:
+
+Controller Logs
+Fetching TODOs
+Creating TODO
+Updating TODO
+Deleting TODO
+Service Logs
+Business logic execution
+Success logs
+Error logs (invalid status, not found)
+
+📌 Example Logs:
+
+Creating new TODO with title: Task 1
+TODO created Successfully with ID: 1
+Notification Sending: New TODO created: Task 1
+
+---
+
+## Notification Service (Dummy)
+
+A simulated external service:
+
+NotificationServiceClient
+
+✔ Called when TODO is created
+✔ Logs message instead of real API call
+
+Example:
+
+Notification Sending: New TODO created: Task 1
+
+## Unit Testing - JUnit 5 , Mockito
 
 ---
 
