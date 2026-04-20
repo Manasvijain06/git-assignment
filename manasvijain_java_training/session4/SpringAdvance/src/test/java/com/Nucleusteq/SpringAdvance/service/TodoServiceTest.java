@@ -98,7 +98,7 @@ public class TodoServiceTest {
     }
     
     // ================= GET ALL =================
-    
+
     @Test
      void testGetAll() {
 
@@ -163,6 +163,7 @@ public class TodoServiceTest {
     }
 
     // ================= DELETE =================
+    
     @Test
     void testDelete() {
 
