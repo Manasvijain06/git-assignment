@@ -98,7 +98,6 @@ public class TodoServiceTest {
     }
     
     // ================= GET ALL =================
-
     @Test
      void testGetAll() {
 
