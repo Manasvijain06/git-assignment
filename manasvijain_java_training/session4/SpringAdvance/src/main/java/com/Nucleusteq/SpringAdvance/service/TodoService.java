@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
+
 import com.Nucleusteq.SpringAdvance.dto.TodoRequestDTO;
 import com.Nucleusteq.SpringAdvance.dto.TodoResponseDTO;
 import com.Nucleusteq.SpringAdvance.entity.Todo;
@@ -21,9 +21,9 @@ public class TodoService {
 
     private static final Logger logger = LoggerFactory.getLogger(TodoService.class);
     private final TodoRepository todoRepository;
-    private final NotificationService notificationService;
+    private final NotificationServiceClient notificationService;
     //Constructor injection
-    public TodoService(TodoRepository todoRepository, NotificationService notificationService) {
+    public TodoService(TodoRepository todoRepository, NotificationServiceClient notificationService) {
         this.todoRepository = todoRepository;
         this.notificationService = notificationService;
     }
