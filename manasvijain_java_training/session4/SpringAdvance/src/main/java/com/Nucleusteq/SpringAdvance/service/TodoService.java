@@ -82,7 +82,10 @@ public class TodoService {
         logger.info("Updating TODO with id: {}",id);
 
         Todo existing = todoRepository.findById(id)
-            .orElseThrow(() -> new TodoNotFoundException("Todo not found"));
+            .orElseThrow(() -> {
+                logger.error("TODO not found for update with id: {}", id);
+                return new TodoNotFoundException("Todo not found");
+            });
 
         existing.setTitle(dto.getTitle());
         existing.setDescription(dto.getDescription());
