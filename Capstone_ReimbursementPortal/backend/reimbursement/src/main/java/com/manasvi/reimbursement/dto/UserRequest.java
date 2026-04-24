@@ -1,91 +1,61 @@
-package com.manasvi.reimbursement.entity;
-
-import jakarta.persistence.*;
+package com.manasvi.reimbursement.dto;
 import jakarta.validation.constraints.*;
 
 /**
- * Entity representing a system user.
- * A user can be:
- * - ADMIN
- * - MANAGER
- * - EMPLOYEE
+ * DTO for User Creation Requests.
  */
 
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserRequest {
 
     @NotBlank(message = "Name is required")
-    @Column(nullable = false)
     private String name;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
-    @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @NotBlank(message = "Role is required")
+    private String role;
 
-    @Column(nullable = true)
     private Long managerId;
 
     //All getters
-    public Long getId() {
-        return id;
-    }
-
-
     public String getName() {
         return name;
     }
-
+    
     public String getEmail() {
         return email;
     }
-
+    
     public String getPassword() {
         return password;
     }
-
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
-
     public Long getManagerId() {
         return managerId;
     }
-
     //All setters
-
-    public void setId(Long id) {
-        this.id = id;
-    }
     public void setName(String name) {
         this.name = name;
     }
-    
     public void setEmail(String email) {
         this.email = email;
     }
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
+
     public void setManagerId(Long managerId) {
         this.managerId = managerId;
     }
     
-
 }
