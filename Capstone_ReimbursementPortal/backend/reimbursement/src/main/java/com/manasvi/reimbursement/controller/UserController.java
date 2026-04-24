@@ -3,9 +3,7 @@ package com.manasvi.reimbursement.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.manasvi.reimbursement.dto.UserRequest;
-import com.manasvi.reimbursement.dto.UserResponse;
-import com.manasvi.reimbursement.dto.ApiResponse;
+import com.manasvi.reimbursement.dto.*;
 import com.manasvi.reimbursement.service.UserService;
 
 import jakarta.validation.Valid;
@@ -52,13 +50,10 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ApiResponse<UserResponse>> createUser(
             @Valid @RequestBody UserRequest dto) {
-
-        UserResponse response = userService.createUser(dto);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("User created successfully", response)
-        );
-    }
+                UserResponse response = userService.createUser(dto);
+                return ResponseEntity.ok(
+                new ApiResponse<>("User created successfully", response));
+            }
 
     // DELETE USER API
     @DeleteMapping("/{id}")
@@ -67,7 +62,14 @@ public class UserController {
         userService.deleteUser(id);
 
         return ResponseEntity.ok(
-                new ApiResponse<>("User deleted successfully", null)
-        );
+            new ApiResponse<>("User deleted successfully", null));
+            }
+
+    // LOGIN API
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<UserResponse>> login(
+        @RequestBody LoginRequest dto) {
+                UserResponse user = userService.login(dto);
+                return ResponseEntity.ok(new ApiResponse<>("Login successful", user));
     }
 }

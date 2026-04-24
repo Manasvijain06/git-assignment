@@ -1,15 +1,21 @@
 package com.manasvi.reimbursement.service;
 
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.stereotype.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import com.manasvi.reimbursement.dto.*;
-import com.manasvi.reimbursement.entity.*;
-import com.manasvi.reimbursement.exception.*;
-import com.manasvi.reimbursement.mapper.*;
-import com.manasvi.reimbursement.repository.*;
+import com.manasvi.reimbursement.dto.LoginRequest;
+import com.manasvi.reimbursement.dto.UserRequest;
+import com.manasvi.reimbursement.dto.UserResponse;
+import com.manasvi.reimbursement.entity.User;
+import com.manasvi.reimbursement.exception.BadRequestException;
+import com.manasvi.reimbursement.exception.DuplicateResourceException;
+import com.manasvi.reimbursement.exception.ResourceNotFoundException;
+import com.manasvi.reimbursement.mapper.UserMapper;
+import com.manasvi.reimbursement.repository.UserRepository;
 
 /**
  * Service Layer for handling User related Business logic .
@@ -22,14 +28,18 @@ import com.manasvi.reimbursement.repository.*;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
     /**
      * Constructor-based Dependency Injection
      * @param userRepository
+     * @param passwordEncoder
      */
 
-    public UserService(UserRepository userRepository) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // GET ALL USERS
@@ -64,6 +74,7 @@ public class UserService {
         }
 
         User user = UserMapper.toEntity(dto);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         User savedUser = userRepository.save(user);
 
@@ -79,5 +90,17 @@ public class UserService {
 
         userRepository.deleteById(id);
     }
+
+    public UserResponse login(LoginRequest dto) {
+
+    User user = userRepository.findByEmail(dto.getEmail())
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+    if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        throw new BadRequestException("Invalid credentials");
+    }
+
+    return UserMapper.toResponse(user);
+}
 
 }
