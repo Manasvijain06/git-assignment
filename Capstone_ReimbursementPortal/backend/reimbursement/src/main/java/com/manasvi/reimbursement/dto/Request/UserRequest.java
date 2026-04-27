@@ -1,5 +1,10 @@
-package com.manasvi.reimbursement.dto;
-import jakarta.validation.constraints.*;
+package com.manasvi.reimbursement.dto.Request;
+import com.manasvi.reimbursement.enums.Role;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  * DTO for User Creation Requests.
@@ -15,31 +20,26 @@ public class UserRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
-    @NotBlank(message = "Role is required")
-    private String role;
-
-    private Long managerId;
+    @NotNull(message = "Role is required")
+    private Role role;
 
     //All getters
     public String getName() {
         return name;
     }
-    
     public String getEmail() {
         return email;
     }
-    
     public String getPassword() {
         return password;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
-    public Long getManagerId() {
-        return managerId;
-    }
+    
     //All setters
     public void setName(String name) {
         this.name = name;
@@ -50,12 +50,8 @@ public class UserRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
-    }
-    
 }

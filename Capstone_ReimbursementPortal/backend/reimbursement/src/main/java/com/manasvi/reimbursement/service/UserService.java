@@ -1,21 +1,21 @@
 package com.manasvi.reimbursement.service;
 
-
+import java.time.*;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.manasvi.reimbursement.dto.LoginRequest;
-import com.manasvi.reimbursement.dto.UserRequest;
-import com.manasvi.reimbursement.dto.UserResponse;
+import com.manasvi.reimbursement.dto.Request.*;
+import com.manasvi.reimbursement.dto.Response.UserResponse;
 import com.manasvi.reimbursement.entity.User;
-import com.manasvi.reimbursement.exception.BadRequestException;
-import com.manasvi.reimbursement.exception.DuplicateResourceException;
+import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.exception.ResourceNotFoundException;
 import com.manasvi.reimbursement.mapper.UserMapper;
 import com.manasvi.reimbursement.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service Layer for handling User related Business logic .
@@ -28,6 +28,7 @@ import com.manasvi.reimbursement.repository.UserRepository;
 @Service
 public class UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     /**
      * Constructor-based Dependency Injection
      * @param userRepository
@@ -42,65 +43,70 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // GET ALL USERS
-    public List<UserResponse> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-            .map(UserMapper::toResponse)
-            .toList();
-}
+    /**
+     * Create a new user in the system.
+     * Validates that the email belongs to the allowed company domain
+     * and that the email is not already registered.
+     */
+    public UserResponse createUser(UserRequest request) {
+        logger.info("Creating user with email:{}",request.getEmail());
 
-    // GET USER BY ID
-    public UserResponse getUserById(Long id) {
-
-    User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-    return UserMapper.toResponse(user);
-}
-
-    // CREATE USER
-    public UserResponse createUser(UserRequest dto) {
-
-        // Email validation (domain check)
-        if (!dto.getEmail().endsWith("@company.com")) {
-            throw new BadRequestException("Invalid email domain. Use company email.");
+        if (!request.getEmail().endsWith("@company.com")) {
+            throw new ValidationException("Invalid email domain. Use company email.");
 }
 
         // Check if email already exists
-        Optional<User> existing = userRepository.findByEmail(dto.getEmail());
-        if (existing.isPresent()) {
-            throw new DuplicateResourceException("Email already exists");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()){
+            throw new ValidationException("Email already registered: " + request.getEmail());
         }
+    
 
-        User user = UserMapper.toEntity(dto);
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        User user = UserMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
+        logger.info("User created with ID:{}",savedUser.getId());
         return UserMapper.toResponse(savedUser);
     }
 
-    // DELETE USER
-    public void deleteUser(Long id) {
+    /**
+     * Retrives all users in the system
+     */
 
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User not found");
-        }
-
-        userRepository.deleteById(id);
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+            .map(UserMapper::toResponse)
+            .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves user by their ID.
+     */
+
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID:" +id));
+            return UserMapper.toResponse(user);
+}
+    /**
+     * Delete the id by user
+     */
+    public void deleteUser(Long id) {
+        logger.info("Deactivating user with ID:{]",id);
+
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+    }
+
+    // login
     public UserResponse login(LoginRequest dto) {
 
     User user = userRepository.findByEmail(dto.getEmail())
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-    if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-        throw new BadRequestException("Invalid credentials");
-    }
-
-    return UserMapper.toResponse(user);
+        
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new ValidationException("Invalid credentials");
+        }
+        return UserMapper.toResponse(user);
 }
-
 }

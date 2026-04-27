@@ -1,15 +1,17 @@
 package com.manasvi.reimbursement.mapper;
 
-import com.manasvi.reimbursement.dto.*;
-import com.manasvi.reimbursement.entity.*;
-import com.manasvi.reimbursement.exception.*;
+import com.manasvi.reimbursement.dto.Request.UserRequest;
+import com.manasvi.reimbursement.dto.Response.UserResponse;
+import com.manasvi.reimbursement.entity.User;
+import com.manasvi.reimbursement.exception.ValidationException;
+
 
 public class UserMapper {
     // DTO → Entity
     public static User toEntity(UserRequest dto) {
 
         if (dto.getRole() == null) {
-            throw new BadRequestException("Role is required");
+            throw new ValidationException("Role is required");
         }
 
         User user = new User();
@@ -17,13 +19,7 @@ public class UserMapper {
         user.setName(dto.getName());
         user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail());
-        user.setManagerId(dto.getManagerId());
-
-        try {
-            user.setRole(Role.valueOf(dto.getRole().toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid role.");
-        }
+        user.setRole(dto.getRole());
 
         return user;
     }
@@ -32,14 +28,15 @@ public class UserMapper {
     // Entity → Response DTO
     public static UserResponse toResponse(User user) {
 
-        UserResponse dto = new UserResponse();
+        UserResponse response = new UserResponse();
 
-        dto.setId(user.getId());
-        dto.setName(user.getName());
-        dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole().name());
+        response.setId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setRole(user.getRole().name());
 
-        return dto;
+        
+        return response;
     }
 }
 

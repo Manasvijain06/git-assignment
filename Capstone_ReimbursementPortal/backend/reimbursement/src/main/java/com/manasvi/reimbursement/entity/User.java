@@ -1,7 +1,10 @@
 package com.manasvi.reimbursement.entity;
 
+import com.manasvi.reimbursement.enums.Role;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+import java.time.LocalDateTime;
 
 /**
  * Entity representing a system user.
@@ -14,35 +17,40 @@ import jakarta.validation.constraints.*;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
     @Column(nullable = false)
     private String name;
 
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
     @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column (nullable = false)
     private Role role;
 
-    @Column(nullable = true)
-    private Long managerId;
+    @ManyToOne
+    @JoinColumn(name = "manager_id")
+    private User manager;
 
-    //All getters
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Getters
     public Long getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
@@ -60,32 +68,38 @@ public class User {
         return role;
     }
 
-    public Long getManagerId() {
-        return managerId;
+    public User getManager() {
+        return manager;
+    }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    //All setters
-
+    // Setters
     public void setId(Long id) {
         this.id = id;
     }
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public void setEmail(String email) {
         this.email = email;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public void setRole(Role role) {
         this.role = role;
     }
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
-    }
-    
 
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

@@ -1,4 +1,4 @@
-package com.manasvi.reimbursement.dto;
+package com.manasvi.reimbursement.dto.Response;
 
 /**
  * Response DTO for sending user data in api responses.
@@ -11,15 +11,7 @@ public class UserResponse {
     private String email;
     private String role;
 
-     // Default constructor
-    public UserResponse() {}
-
-    // Parameterized constructor
-    public UserResponse(Long id, String name, String email, String role) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.role = role;
+    public UserResponse() {
     }
 
     //All getters
@@ -36,6 +28,7 @@ public class UserResponse {
     public String getRole() {
         return role;
     }
+
     //All setters
     public void setId(Long id) {
         this.id = id;
