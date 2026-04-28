@@ -8,7 +8,6 @@ import com.manasvi.reimbursement.entity.Claim;
 import com.manasvi.reimbursement.enums.ClaimStatus;
 import com.manasvi.reimbursement.entity.User;
 
-
 /**
  * Mapper class responsible for converting between Claim entity and DTOs.
  */
@@ -27,6 +26,7 @@ public class ClaimMapper {
         claim.setStatus(ClaimStatus.SUBMITTED);
         return claim;
     }
+
     /**
      * Converts a Claim entity to a ClaimResponse DTO.
      */
@@ -39,7 +39,6 @@ public class ClaimMapper {
         response.setDescription(claim.getDescription());
         response.setStatus(claim.getStatus());
         response.setComment(claim.getComment());
-    
 
         if (claim.getEmployee() != null) {
             response.setEmployeeId(claim.getEmployee().getId());
@@ -47,5 +46,3 @@ public class ClaimMapper {
         return response;
     }
 }
-
-

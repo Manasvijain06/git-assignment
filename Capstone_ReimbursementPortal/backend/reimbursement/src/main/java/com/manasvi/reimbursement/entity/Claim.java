@@ -34,7 +34,7 @@ public class Claim {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ClaimStatus status = ClaimStatus.SUBMITTED;
-    
+
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
     private User employee;
@@ -51,50 +51,64 @@ public class Claim {
     public Long getId() {
         return id;
     }
+
     public User getEmployee() {
         return employee;
     }
+
     public User getReviewer() {
         return reviewer;
     }
+
     public Double getAmount() {
         return amount;
     }
+
     public LocalDate getClaimDate() {
         return claimDate;
     }
+
     public String getDescription() {
         return description;
     }
+
     public ClaimStatus getStatus() {
         return status;
     }
+
     public String getComment() {
         return comment;
     }
 
-    //All setters
+    // All setters
     public void setId(Long id) {
         this.id = id;
     }
+
     public void setEmployee(User employee) {
         this.employee = employee;
     }
+
     public void setReviewer(User reviewer) {
         this.reviewer = reviewer;
     }
+
     public void setAmount(Double amount) {
         this.amount = amount;
     }
+
     public void setClaimDate(LocalDate claimDate) {
         this.claimDate = claimDate;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public void setStatus(ClaimStatus status) {
         this.status = status;
     }
+
     public void setComment(String comment) {
         this.comment = comment;
     }

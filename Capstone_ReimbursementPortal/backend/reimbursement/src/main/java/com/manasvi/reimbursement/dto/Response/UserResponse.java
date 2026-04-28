@@ -14,10 +14,11 @@ public class UserResponse {
     public UserResponse() {
     }
 
-    //All getters
+    // All getters
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
@@ -25,20 +26,24 @@ public class UserResponse {
     public String getEmail() {
         return email;
     }
+
     public String getRole() {
         return role;
     }
 
-    //All setters
+    // All setters
     public void setId(Long id) {
         this.id = id;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
+
     public void setRole(String role) {
         this.role = role;
     }

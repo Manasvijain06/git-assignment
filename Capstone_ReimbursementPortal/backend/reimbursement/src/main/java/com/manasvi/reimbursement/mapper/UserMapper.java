@@ -5,7 +5,6 @@ import com.manasvi.reimbursement.dto.Response.UserResponse;
 import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.exception.ValidationException;
 
-
 public class UserMapper {
     // DTO → Entity
     public static User toEntity(UserRequest dto) {
@@ -24,7 +23,6 @@ public class UserMapper {
         return user;
     }
 
-
     // Entity → Response DTO
     public static UserResponse toResponse(User user) {
 
@@ -35,9 +33,6 @@ public class UserMapper {
         response.setEmail(user.getEmail());
         response.setRole(user.getRole().name());
 
-        
         return response;
     }
 }
-
-

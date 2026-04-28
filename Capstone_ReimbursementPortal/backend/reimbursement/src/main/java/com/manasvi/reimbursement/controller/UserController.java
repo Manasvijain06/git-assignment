@@ -29,9 +29,8 @@ import java.util.List;
  * - Fetching a user by ID
  * - Creating a new user
  * - Deleting a user by ID
- *  Base Url: api/users
+ * Base Url: api/users
  */
-
 
 @RestController
 @RequestMapping("/api/users")
@@ -51,29 +50,29 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ApiResponse<UserResponse>> createUser(
             @Valid @RequestBody UserRequest request) {
-                UserResponse user = userService.createUser(request);
-                return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("User created successfully", user));
-            }
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("User created successfully",
+                        userService.createUser(request)));
+    }
 
     /**
      * Retrieve all users
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.ok(ApiResponse.success("Users fetched successfully", users));
-        }
-        
+        return ResponseEntity.ok(
+                ApiResponse.success("Users fetched successfully", userService.getAllUsers()));
+    }
+
     /**
      * Retrieves a specific user by ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
-        UserResponse user = userService.getUserById(id);
-        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", user));
-        }
+        return ResponseEntity.ok(
+                ApiResponse.success("User fetched successfully", userService.getUserById(id)));
+    }
 
     /**
      * To update a user
@@ -85,16 +84,29 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable Long id) {
-        logger.info("Request to remove User:{}",id);
+        logger.info("Request to remove User:{}", id);
         userService.deleteUser(id);
-        return ResponseEntity.ok(ApiResponse.success("User deleted successfully", null));
-            }
+        return ResponseEntity.ok(
+                ApiResponse.success("User deleted successfully", null));
+    }
+
+    /**
+     * Assign manager
+     */
+    @PutMapping("/{employeeId}/assign-manager/{managerId}")
+    public ResponseEntity<ApiResponse<String>> assignManager(
+            @PathVariable Long employeeId,
+            @PathVariable Long managerId) {
+
+        userService.assignManager(employeeId, managerId);
+        return ResponseEntity.ok(ApiResponse.success("Manager assigned", null));
+    }
 
     // LOGIN API
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<UserResponse>> login(
-        @RequestBody LoginRequest dto) {
-                UserResponse user = userService.login(dto);
-                return ResponseEntity.ok(ApiResponse.success("Login successful", user));
+            @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(
+                ApiResponse.success("Login successful", userService.login(request)));
     }
 }

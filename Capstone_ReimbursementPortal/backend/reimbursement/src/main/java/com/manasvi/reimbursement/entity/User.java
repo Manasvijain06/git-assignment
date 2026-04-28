@@ -1,10 +1,10 @@
 package com.manasvi.reimbursement.entity;
 
-import com.manasvi.reimbursement.enums.Role;
+import java.time.*;
+
+import com.manasvi.reimbursement.enums.*;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
 
 /**
  * Entity representing a system user.
@@ -32,7 +32,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    @Column (nullable = false)
+    @Column(nullable = false)
     private Role role;
 
     @ManyToOne
@@ -43,63 +43,65 @@ public class User {
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist() {
+    public final void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
     // Getters
-    public Long getId() {
+    public final Long getId() {
         return id;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public String getEmail() {
+    public final String getEmail() {
         return email;
     }
 
-    public String getPassword() {
+    public final String getPassword() {
         return password;
     }
 
-    public Role getRole() {
+    public final Role getRole() {
         return role;
     }
 
     public User getManager() {
         return manager;
     }
-    public LocalDateTime getCreatedAt() {
+
+    public final LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     // Setters
-    public void setId(Long id) {
+    public final void setId(final Long id) {
         this.id = id;
     }
 
-    public void setName(String name) {
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public void setEmail(String email) {
+    public final void setEmail(final String email) {
         this.email = email;
     }
 
-    public void setPassword(String password) {
+    public final void setPassword(final String password) {
         this.password = password;
     }
 
-    public void setRole(Role role) {
+    public final void setRole(final Role role) {
         this.role = role;
     }
 
-    public void setManager(User manager) {
+    public final void setManager(final User manager) {
         this.manager = manager;
     }
-    public void setCreatedAt(LocalDateTime createdAt) {
+
+    public final void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

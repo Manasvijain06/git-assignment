@@ -1,4 +1,5 @@
 package com.manasvi.reimbursement.enums;
+
 /**
  * Defines user roles in the system.
  */

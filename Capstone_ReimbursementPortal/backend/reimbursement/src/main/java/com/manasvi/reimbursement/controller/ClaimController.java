@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.entity.Claim;
 import com.manasvi.reimbursement.mapper.ClaimMapper;
 import com.manasvi.reimbursement.repository.UserRepository;
@@ -25,92 +24,117 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/claims")
 public class ClaimController {
+        private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(ClaimController.class);
+        private final ClaimService claimService;
+        private final ClaimMapper claimMapper;
 
-    private final ClaimService claimService;
-    private final ClaimMapper claimMapper;
-    private final UserRepository userRepository;
+        public ClaimController(ClaimService claimService,
+                        ClaimMapper claimMapper) {
+                this.claimService = claimService;
+                this.claimMapper = claimMapper;
+        }
 
-    public ClaimController(ClaimService claimService,
-        ClaimMapper claimMapper,UserRepository userRepository) {
-        this.claimService = claimService;
-        this.claimMapper = claimMapper;
-        this.userRepository = userRepository;
-    }
+        /**
+         * Create Claim
+         */
+        @PostMapping
+        public ResponseEntity<ApiResponse<ClaimResponse>> createClaim(
+                        @Valid @RequestBody ClaimRequest request) {
 
-    /**
-     * Create Claim
-     */
-    @PostMapping
-public ResponseEntity<ApiResponse<ClaimResponse>> createClaim(
-        @Valid @RequestBody ClaimRequest request) {
+                logger.info("Received request to create claim for employeeId: {}", request.getEmployeeId());
+                Claim claim = claimService.createClaim(request);
+                ClaimResponse response = claimMapper.toResponse(claim);
 
-    logger.info("Employee {} submitting claim", request.getEmployeeId());
+                logger.info("Claim created successfully with ID: {}", claim.getId());
+                return ResponseEntity
+                                .status(HttpStatus.CREATED)
+                                .body(ApiResponse.success("Claim submitted successfully", response));
+        }
 
-    // Fetch employee
-    User employee = userRepository.findById(request.getEmployeeId())
-            .orElseThrow(() -> new RuntimeException("Employee not found"));
+        /**
+         * Get Claim by ID
+         */
+        @GetMapping("/{id}")
+        public ResponseEntity<ApiResponse<ClaimResponse>> getById(@PathVariable Long id) {
+                logger.info("Fetching claim with ID: {}", id);
 
-    // Map request → entity
-    Claim claim = claimMapper.toEntity(request, employee);
+                Claim claim = claimService.getById(id);
+                ClaimResponse response = claimMapper.toResponse(claim);
 
-    // Save
-    Claim savedClaim = claimService.createClaim(claim);
+                return ResponseEntity.ok(
+                                ApiResponse.success("Claim fetched successfully", response));
+        }
 
-    ClaimResponse response = claimMapper.toResponse(savedClaim);
+        /**
+         * Get employee claim
+         */
+        @GetMapping("/employee/{employeeId}")
+        public Page<Claim> getEmployeeClaims(
+                        @PathVariable Long employeeId,
+                        @RequestParam int page,
+                        @RequestParam int size) {
 
-    return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(ApiResponse.success("Claim submitted successfully", response));
-}
-    
-    /**
-     * Get Claim by ID
-     */
-    @GetMapping("/{id}")
-    public Claim getById(@PathVariable Long id) {
-        return claimService.getById(id);
-    }
+                Page<Claim> claims = claimService.getClaimsByEmployee(employeeId, PageRequest.of(page, size));
+                return claimService.getClaimsByEmployee(employeeId, PageRequest.of(page, size));
+        }
 
-    /**
-     * Get employee claim
-     */
-    @GetMapping("/employee/{employeeId}")
-    public Page<Claim> getEmployeeClaims(
-            @PathVariable Long employeeId,
-            @RequestParam int page,
-            @RequestParam int size) {
+        /**
+         * Get All Claims
+         */
+        @GetMapping
+        public ResponseEntity<ApiResponse<Page<ClaimResponse>>> getAllClaims(
+                        @RequestParam int page,
+                        @RequestParam int size) {
+                logger.info("Fetching all claims, page: {}, size: {}", page, size);
 
-        return claimService.getClaimsByEmployee(employeeId, PageRequest.of(page, size));
-    }
+                Page<Claim> claims = claimService.getAllClaims(
+                                PageRequest.of(page, size));
 
-    /**
-     * Get All claims
-     */
-    @GetMapping
-    public Page<Claim> getAllClaims(
-            @RequestParam int page,
-            @RequestParam int size) {
+                Page<ClaimResponse> response = claims.map(claimMapper::toResponse);
 
-        return claimService.getAllClaims(PageRequest.of(page, size));
-    }
+                return ResponseEntity.ok(
+                                ApiResponse.success(
+                                                "All claims fetched successfully", response));
+        }
 
-    /**
-     * Approve Claim.
-     */
-    @PutMapping("/{id}/approve")
-    public Claim approve(@PathVariable Long id,
-                        @RequestParam Long reviewerId) {
-        return claimService.approveClaim(id, reviewerId);
-    }
+        /**
+         * Approve Claim.
+         */
+        @PutMapping("/{id}/approve")
+        public ResponseEntity<ApiResponse<ClaimResponse>> approve(
+                        @PathVariable Long id,
+                        @RequestParam Long reviewerId,
+                        @RequestParam String comment) {
 
-    /**
-     * Reject claim.
-     */
-    @PutMapping("/{id}/reject")
-    public Claim reject(@PathVariable Long id,
-                        @RequestParam Long reviewerId) {
-        return claimService.rejectClaim(id, reviewerId);
-    }
+                logger.info("Approving claim ID: {} by reviewer: {}", id, reviewerId);
+
+                Claim claim = claimService.approveClaim(id, reviewerId, comment);
+                ClaimResponse response = claimMapper.toResponse(claim);
+
+                logger.info("Claim ID: {} approved successfully", id);
+
+                return ResponseEntity.ok(
+                                ApiResponse.success(
+                                                "Claim approved successfully", response));
+        }
+
+        /**
+         * Reject claim.
+         */
+        @PutMapping("/{id}/reject")
+        public ResponseEntity<ApiResponse<ClaimResponse>> reject(
+                        @PathVariable Long id,
+                        @RequestParam Long reviewerId,
+                        @RequestParam String comment) {
+                logger.info("Rejecting claim ID: {} by reviewer: {}", id, reviewerId);
+                Claim claim = claimService.rejectClaim(id, reviewerId, comment);
+                ClaimResponse response = claimMapper.toResponse(claim);
+
+                logger.info("Claim ID: {} rejected successfully", id);
+
+                return ResponseEntity.ok(
+                                ApiResponse.success(
+                                                "Claim rejected successfully", response));
+        }
 }

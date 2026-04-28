@@ -1,6 +1,5 @@
 package com.manasvi.reimbursement.dto.Request;
 
-
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotNull;
@@ -32,30 +31,34 @@ public class ClaimRequest {
     public Long getEmployeeId() {
         return employeeId;
     }
+
     public Double getAmount() {
         return amount;
     }
+
     public String getDescription() {
         return description;
     }
+
     public LocalDate getClaimDate() {
         return claimDate;
     }
-    
+
     // Setters
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
+
     public void setAmount(Double amount) {
         this.amount = amount;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public void setClaimDate(LocalDate claimDate) {
         this.claimDate = claimDate;
     }
 
-
 }
-

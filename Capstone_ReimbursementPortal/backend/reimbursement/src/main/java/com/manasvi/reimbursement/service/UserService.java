@@ -1,21 +1,21 @@
 package com.manasvi.reimbursement.service;
 
-import java.time.*;
 import java.util.List;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.manasvi.reimbursement.dto.Request.*;
+import com.manasvi.reimbursement.dto.Request.LoginRequest;
+import com.manasvi.reimbursement.dto.Request.UserRequest;
 import com.manasvi.reimbursement.dto.Response.UserResponse;
 import com.manasvi.reimbursement.entity.User;
-import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.exception.ResourceNotFoundException;
+import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.mapper.UserMapper;
 import com.manasvi.reimbursement.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service Layer for handling User related Business logic .
@@ -31,6 +31,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     /**
      * Constructor-based Dependency Injection
+     * 
      * @param userRepository
      * @param passwordEncoder
      */
@@ -38,7 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(final UserRepository userRepository, final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -48,65 +49,98 @@ public class UserService {
      * Validates that the email belongs to the allowed company domain
      * and that the email is not already registered.
      */
-    public UserResponse createUser(UserRequest request) {
-        logger.info("Creating user with email:{}",request.getEmail());
+    public UserResponse createUser(final UserRequest request) {
+        logger.info("Creating user with email:{}", request.getEmail());
 
+        /**
+         * Email domain validation
+         */
         if (!request.getEmail().endsWith("@company.com")) {
             throw new ValidationException("Invalid email domain. Use company email.");
-}
+        }
 
-        // Check if email already exists
-        if (userRepository.findByEmail(request.getEmail()).isPresent()){
+        /**
+         * check duplicate email
+         */
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new ValidationException("Email already registered: " + request.getEmail());
         }
-    
-
         User user = UserMapper.toEntity(request);
+
+        /**
+         * Encrypt password
+         */
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         User savedUser = userRepository.save(user);
 
-        logger.info("User created with ID:{}",savedUser.getId());
+        logger.info("User created with ID:{}", savedUser.getId());
+
         return UserMapper.toResponse(savedUser);
     }
 
     /**
-     * Retrives all users in the system
+     * Retrieves all users in the system
      */
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
-            .map(UserMapper::toResponse)
-            .collect(Collectors.toList());
+                .map(UserMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     /**
      * Retrieves user by their ID.
      */
 
-    public UserResponse getUserById(Long id) {
+    public UserResponse getUserById(final Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID:" +id));
-            return UserMapper.toResponse(user);
-}
-    /**
-     * Delete the id by user
-     */
-    public void deleteUser(Long id) {
-        logger.info("Deactivating user with ID:{]",id);
-
-        User user = userRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID:" + id));
+        return UserMapper.toResponse(user);
     }
 
-    // login
-    public UserResponse login(LoginRequest dto) {
+    /**
+     * Delete User
+     */
+    public void deleteUser(final Long id) {
+        logger.info("Deactivating user with ID:{]", id);
 
-    User user = userRepository.findByEmail(dto.getEmail())
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+        userRepository.delete(user);
+    }
+
+    /**
+     * Assign Manager
+     * 
+     * @param employeeId
+     * @param managerId
+     */
+    public void assignManager(final Long employeeId, final Long managerId) {
+
+        User employee = userRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        User manager = userRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
+
+        employee.setManager(manager);
+        userRepository.save(employee);
+    }
+
+    /**
+     * Login
+     * 
+     * @param dto
+     * @return
+     */
+    public UserResponse login(final LoginRequest dto) {
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ValidationException("Invalid credentials");
         }
         return UserMapper.toResponse(user);
-}
+    }
 }
