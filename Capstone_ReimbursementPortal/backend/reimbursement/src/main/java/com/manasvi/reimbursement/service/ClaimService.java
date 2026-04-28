@@ -41,7 +41,10 @@ public class ClaimService {
     }
 
     /**
-     * Create a new claim
+     * Create a claim
+     * 
+     * @param request
+     * @return
      */
     public Claim createClaim(ClaimRequest request) {
 
@@ -95,6 +98,9 @@ public class ClaimService {
 
     /**
      * Get Claim by ID
+     * 
+     * @param id
+     * @return
      */
     public Claim getById(Long id) {
         logger.info("Fetching claim with ID: {}", id);
@@ -104,6 +110,10 @@ public class ClaimService {
 
     /**
      * Get Claims by Employee
+     * 
+     * @param employeeId
+     * @param pageable
+     * @return
      */
     public Page<Claim> getClaimsByEmployee(Long employeeId, Pageable pageable) {
         return claimRepository.findByEmployeeId(employeeId, pageable);
@@ -111,6 +121,9 @@ public class ClaimService {
 
     /**
      * Get all claims (paginated)
+     * 
+     * @param pageable
+     * @return
      */
     public Page<Claim> getAllClaims(Pageable pageable) {
 
@@ -119,8 +132,13 @@ public class ClaimService {
         return claimRepository.findAll(pageable);
     }
 
-    /*
+    /**
      * Approve claim
+     * 
+     * @param id
+     * @param reviewerId
+     * @param comment
+     * @return
      */
     public Claim approveClaim(Long id, Long reviewerId, String comment) {
         Claim claim = getById(id);
@@ -139,7 +157,14 @@ public class ClaimService {
         return claimRepository.save(claim);
     }
 
-    // REJECT CLAIM
+    /**
+     * Reject claim
+     * 
+     * @param id
+     * @param reviewerId
+     * @param comment
+     * @return
+     */
     public Claim rejectClaim(Long id, Long reviewerId, String comment) {
         Claim claim = getById(id);
 
