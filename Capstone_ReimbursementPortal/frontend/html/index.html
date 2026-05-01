@@ -1,42 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Login - Reimbursement Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Reimbursement Portal</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-<div class ="container">
-    <!--left side -->
-    <div class = "left-section">
-        <div class = "brand">
-        <img src = "https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3" alt="logo" width="80">
-        <h2>Reimbursement<br>Portal</h2>
+
+<body class="login-page">
+    <div class="login-container">
+        <div class="left-section">
+            <div class="brand">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3"
+                    alt="logo" width="80">
+                <h2>Reimbursement<br>Portal</h2>
+            </div>
+            <p>Submit, Track & Manage your reimbursement claims with ease.</p>
+            <img src="https://workplaceinsight.net/wp-content/uploads/2024/03/Flexible-work-report.png"
+                alt="illustration" class="brand-illustration">
         </div>
-        <p>Submit, Track & Manage your reimbursement claims with ease.</p>
-        <img src = "https://workplaceinsight.net/wp-content/uploads/2024/03/Flexible-work-report.png" alt="image">
+
+        <div class="right-section">
+            <div class="auth-box">
+                <div class="tab-group">
+                    <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                    <button class="tab-btn" onclick="switchTab('signup')">Register</button>
+                </div>
+
+                <div id="loginSection">
+                    <h2>Welcome Back!</h2>
+                    <p class="subtitle">Please log in to your account</p>
+                    <form id="loginForm">
+                        <div class="input-box">
+                            <span class="input-icon"></span>
+                            <input type="email" id="loginEmail" placeholder="Email" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="input-icon"></span>
+                            <input type="password" id="loginPassword" placeholder="Password" required>
+                        </div>
+                        <button type="submit" id="loginBtn" class="btn-main">Access Portal</button>
+                        <p id="errorMsg" style="color:red; margin-top: 12px; font-size: 13px;"></p>
+                    </form>
+                    <p class="forget" onclick="alert('Contact administrator to reset your password.')">Forgot Password?
+                    </p>
+                </div>
+
+                <div id="signupSection" style="display: none;">
+                    <h2>Create Account</h2>
+                    <p class="subtitle">Join the corporate network to start filing claims</p>
+                    <form id="signupForm">
+                        <div class="input-box">
+                            <span class="input-icon"></span>
+                            <input type="text" id="regName" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="input-icon"></span>
+                            <input type="email" id="regEmail" placeholder="Email (@company.com)" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="input-icon"></span>
+                            <input type="password" id="regPassword" placeholder="Create Password" required>
+                        </div>
+                        <button type="submit" id="signupBtn" class="btn-main">Register Now</button>
+                        <p id="signupErrorMsg" style="color:red; margin-top: 12px; font-size: 13px;"></p>
+                    </form>
+                </div>
+
+                <p class="note">© Reimbursement Portal</p>
+            </div>
+        </div>
     </div>
 
-    <!--Right side-->
-    <div class="right-section">
-        <div class="login-card">
-        <h2>Welcome Back!</h2>
-        <p class="subtitle">Please log in to your account</p>
-
-        <div class="input-box">
-        <input type="email" id="email" placeholder="Enter email" required>
-        <input type="password" id="password" placeholder="Enter password" required>
-
-        <button onclick="login()">Login</button>
-        <p class="forgot">Forgot Password?</p>
-
-        <p class="note">© Reimbursement Portal</p>
-
-        </div>
-    </div>
-</div>
-
-<script src="../js/login.js"></script>
-
+    <script src="../js/auth.js"></script>
 </body>
+
 </html>

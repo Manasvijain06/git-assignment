@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard | Reimbursement Portal</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"> <img
+                        src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3"
+                        alt="logo" width="50"></div>
+                <span>Reimbursement<br><small>Portal</small></span>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="employee.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="logout-section">
+                <a href="index.html" id="logoutBtn" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h2>Employee's Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-info">
+                            <span class="user-name" id="profileName"></span>
+                            <span class="user-role" id="profileRole"></span>
+                        </div>
+                        <div class="avatar">👤</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Claims</h3>
+                        <p id="totalClaims" class="stat-number"></p>
+                        <small>All time</small>
+                    </div>
+                    <div class="stat-icon blue">📄</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Pending</h3>
+                        <p id="pendingClaims" class="stat-number"></p>
+                        <small>Waiting for review</small>
+                    </div>
+                    <div class="stat-icon orange">🕒</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Approved</h3>
+                        <p id="approvedClaims" class="stat-number"></p>
+                        <small>Total approved</small>
+                    </div>
+                    <div class="stat-icon green">✅</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Rejected</h3>
+                        <p id="rejectedClaims" class="stat-number"></p>
+                        <small>Total rejected</small>
+                    </div>
+                    <div class="stat-icon red">❌</div>
+                </div>
+            </div>
+
+            <div class="claims-workspace">
+                <section class="form-card">
+                    <h3>Submit New Claim</h3>
+                    <form id="claimForm">
+                        <div class="input-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" id="amount" placeholder="₹" required min="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea id="description" rows="3" placeholder="Describe the expense..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" id="submitClaimBtn" class="btn-submit">Submit Claim</button>
+                    </form>
+                </section>
+
+                <section class="table-card">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="styled-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentClaimsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/employee.js"></script>
+</body>
+
+</html>
