@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Claims - Reimbursement Portal</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- SIDEBAR -->
+        <nav class="sidebar">
+            <div class="logo">
+                <img src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&rm=3"
+                    width="50">
+                <span>Reimbursement<br><small>Portal</small></span>
+            </div>
+
+            <ul class="nav-links">
+                <li><a href="#" onclick="goToDashboard()">Dashboard</a></li>
+
+                <li><a href="review-claims.html" class="active">Review Claims</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+
+            <div class="logout-section">
+                <a href="../html/index.html" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <header class="top-header">
+                <div class="header-left">
+                    <h2>Review Claims</h2>
+                </div>
+                <div class="header-right">
+                    <a href="profile.html" class="user-profile" style="text-decoration: none; color: inherit;">
+                        <div class="user-info">
+                            <span class="user-name" id="profileName">User</span>
+                            <span class="user-role" id="profileRole">Role</span>
+                        </div>
+                        <div class="avatar">👤</div>
+                    </a>
+                </div>
+            </header>
+
+            <!-- CLAIM TABLE -->
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Employee</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="reviewTableBody">
+                        <tr>
+                            <td colspan="5">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+
+            <h3 id="modalTitle">Review Claim</h3>
+
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <input type="hidden" id="claimId">
+                <input type="hidden" id="claimAction">
+
+                <div class="form-group">
+                    <label for="reviewComment">Comment / Reason</label>
+                    <textarea id="reviewComment" placeholder="Write your review comment here..."></textarea>
+                </div>
+
+                <br><br>
+
+                <button type="button" onclick="closeModal()">Cancel</button>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="../js/review-claims.js"></script>
+
+</body>
+
+</html>

@@ -4,9 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard | Reimbursement Portal</title>
+    <title>Admin Dashboard | Reimbursement Portal</title>
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Save the current page URL as the last visited dashboard
+        sessionStorage.setItem('lastDashboard', window.location.href);
+    </script>
 </head>
 
 <body>
@@ -20,20 +24,23 @@
                 <span>Reimbursement<br><small>Portal</small></span>
             </div>
             <ul class="nav-links">
-                <li class="active"><a href="employee.html">Dashboard</a></li>
+                <li class="active"><a href="admin.html">Dashboard</a></li>
+                <li><a href="user.html">Manage Users</a></li>
+                <li><a href="assign-manager.html">Assign Managers</a></li>
+                <li><a href="review-claims.html">Review Claims</a></li>
                 <li><a href="profile.html"
                         onclick="sessionStorage.setItem('lastDashboard', window.location.href);">Profile</a></li>
-
+            </ul>
             </ul>
             <div class="logout-section">
-                <a href="index.html" id="logoutBtn" class="logout-btn">Logout</a>
+                <a href="index.html" id="logoutLink" class="logout-btn">Logout</a>
             </div>
         </nav>
 
         <main class="main-content">
             <header class="top-header">
                 <div class="header-left">
-                    <h2>Employee's Dashboard</h2>
+                    <h2>Admin's Dashboard</h2>
                     <p>Welcome back, <span id="managerWelcomeName">employee</span>!</p>
                 </div>
                 <div class="header-right">
@@ -49,79 +56,69 @@
                 </div>
             </header>
 
-            <div class="stats-grid">
+            <div class="stats-grid admin-stats">
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>Total Claims</h3>
+                        <h3>Total Users</h3>
+                        <p id="totalUsers" class="stat-number"></p>
+                        <small>Users</small>
+                    </div>
+                    <div class="stat-icon purple">👥</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>All Claims</h3>
                         <p id="totalClaims" class="stat-number"></p>
-                        <small>All time</small>
+                        <small>Total claims</small>
                     </div>
                     <div class="stat-icon blue">📄</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>Submitted</h3>
-                        <p id="submittedClaims" class="stat-number"></p>
-                        <small>Waiting for review</small>
+                        <h3>Awaiting Review</h3>
+                        <p id="pendingClaims" class="stat-number"></p>
+                        <small>Highest priority</small>
                     </div>
                     <div class="stat-icon orange">🕒</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-info">
-                        <h3>Approved</h3>
+                        <h3>System Approved</h3>
                         <p id="approvedClaims" class="stat-number"></p>
-                        <small>Total approved</small>
+                        <small>Successfully processed</small>
                     </div>
                     <div class="stat-icon green">✅</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <h3>Rejected</h3>
-                        <p id="rejectedClaims" class="stat-number"></p>
-                        <small>Total rejected</small>
-                    </div>
-                    <div class="stat-icon red">❌</div>
-                </div>
             </div>
 
-            <div class="claims-workspace">
-                <section class="form-card">
-                    <h3>Submit New Claim</h3>
-                    <form id="claimForm">
-                        <div class="input-group">
-                            <label>Amount (₹)</label>
-                            <input type="number" id="amount" placeholder="₹" required min="1">
-                        </div>
-                        <div class="input-group">
-                            <label>Date</label>
-                            <input type="date" id="date" required>
-                        </div>
-                        <div class="input-group">
-                            <label>Description</label>
-                            <textarea id="description" rows="3" placeholder="Describe the expense..."
-                                required></textarea>
-                        </div>
-                        <button type="submit" id="submitClaimBtn" class="btn-submit">Submit Claim</button>
-                    </form>
-                </section>
-
-                <section class="table-card">
+            <div class="admin-workspace">
+                <section class="table-card full-width">
                     <div class="section-header">
-                        <h3>Recent Activity</h3>
+                        <h3>All Claims</h3>
+                        <div class="header-actions">
+                            <br>
+                            <div class="search-box">
+                                <input type="search" id="claimSearch" placeholder="🔍 Search by ID or Name..." />
+                            </div>
+                            <br>
+                        </div>
                     </div>
                     <div class="table-container">
-                        <table class="styled-table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Claim ID</th>
+                                    <th>Employee</th>
                                     <th>Amount</th>
                                     <th>Date</th>
-                                    <th>Description</th>
                                     <th>Status</th>
-                                    <th>Comments</th>
+                                    <th>Reviewer</th>
                                 </tr>
                             </thead>
-                            <tbody id="recentClaimsTableBody">
+                            <tbody id="adminClaimsTableBody">
+                                <tr>
+                                    <td colspan="6" style="text-align:center;">Fetching live data...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -135,7 +132,7 @@
         </main>
     </div>
 
-    <script src="../js/employee.js"></script>
+    <script src="../js/admin.js"></script>
 </body>
 
 </html>

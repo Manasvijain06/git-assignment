@@ -56,7 +56,7 @@ if (loginForm) {
 
             // Save to local storage
             localStorage.setItem("user", JSON.stringify(data));
-            
+
 
             // Role redirects
             if (data.role === "ADMIN") {
@@ -105,12 +105,17 @@ if (signupForm) {
                 })
             });
 
+            const passwordPattern = /^\d{6}$/;
             if (response.ok) {
-                alert("Registration Successful! Redirecting to login.");
+                showMessage("Registration Successful! Redirecting to login.");
                 switchTab('login');
                 signupForm.reset();
-            } else {
-                throw new Error("Registration failed. Ensure your email is corporate.");
+            }
+            if (!passwordPattern.test(password)) {
+                errorMsg.innerText = "Password must be exactly 6 digits";
+            }
+            else {
+                throw new Error("Use your company's email");
             }
         } catch (err) {
             errorMsg.innerText = err.message;
@@ -119,4 +124,26 @@ if (signupForm) {
             btn.innerText = "Register Now";
         }
     });
+
+}
+function showMessage(message, type = "success") {
+
+    let container = document.getElementById("toastContainer");
+
+    // create container if not exists
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toastContainer";
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
 }

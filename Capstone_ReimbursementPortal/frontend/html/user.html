@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="../css/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3"
+                        alt="logo" width="32">
+                </div>
+                <span>Reimbursement<br><small>Portal</small></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="admin.html">Dashboard</a></li>
+                <li class="active"><a href="user.html">Manage User</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="logout-section">
+                <a href="index.html" id="logoutBtn" class="logout-btn">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h2>Manage User</h2>
+                    <p>Add new user accounts to the system</p>
+                </div>
+                <div class="header-right">
+                    <a href="profile.html" class="user-profile" style="text-decoration: none; color: inherit;"
+                        onclick="sessionStorage.setItem('lastDashboard', window.location.href);">
+                        <div class="user-info">
+                            <span class="user-name" id="profileName">Admin</span>
+                            <span class="user-role" id="profileRole">ADMIN</span>
+                        </div>
+                        <div class="avatar">👤</div>
+                    </a>
+                </div>
+            </header>
+
+            <div class="management-container">
+                <div id="notificationContainer" class="notification"></div>
+
+                <div class="user-management-grid">
+
+                    <div class="form-card">
+                        <h2>Create New User</h2>
+                        <form id="userForm" onsubmit="event.preventDefault(); createUser();">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" placeholder="Enter Name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" placeholder="Enter Email" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" placeholder="Enter Password" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="role">Role</label>
+                                <select id="role" required>
+                                    <option value="EMPLOYEE">EMPLOYEE</option>
+                                    <option value="MANAGER">MANAGER</option>
+                                    <option value="ADMIN">ADMIN</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" id="submitUserBtn" class="btn-primary">Create User</button>
+                        </form>
+                    </div>
+
+                    <div class="form-card">
+                        <h2>Existing Users</h2>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;">
+                                            Loading users...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+        </main>
+    </div>
+
+    <script src="../js/user.js"></script>
+
+</body>
+
+</html>

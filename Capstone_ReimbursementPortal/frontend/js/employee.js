@@ -1,3 +1,7 @@
+let currentPage = 0;
+let pageSize = 5;
+let totalPages = 0;
+
 document.addEventListener("DOMContentLoaded", function () {
     // 1. SECURITY & PROFILE INITIALIZATION
     const userDataString = localStorage.getItem("user");
@@ -12,28 +16,37 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Logged in user:", user);
 
     // 2. INJECT USER PROFILE DATA
-    const nameElement = document.getElementById("profileName");
-    const roleElement = document.getElementById("profileRole");
-    const welcomeHeader = document.querySelector(".top-header h2");
+    if (user) {
+        if (document.getElementById("managerWelcomeName"))
+            document.getElementById("managerWelcomeName").innerText = user.name || 'Admin';
 
-    if (nameElement) nameElement.innerText = user.name;
-    if (roleElement) roleElement.innerText = user.role;
-    
-    if (welcomeHeader) {
-        // Friendly greeting using first name
-        const firstName = user.name.split(' ')[0];
-        welcomeHeader.innerText = `Welcome back, ${firstName}!`;
+        if (document.getElementById("profileName"))
+            document.getElementById("profileName").innerText = user.name || 'Admin User';
+
+        if (document.getElementById("profileRole"))
+            document.getElementById("profileRole").innerText = user.role || 'ADMIN';
     }
+
 
     // 3. FETCH DYNAMIC DASHBOARD STATS
     if (document.querySelector('.stats-grid')) {
         fetchDashboardStats(user);
     }
+    loadEmployeeClaims();
+    loadRecentClaims(user.id, 0);
 
-    // 4. LOAD CLAIMS
-   loadEmployeeClaims(); // Fills the main activity table
-    loadRecentClaims(user.id); // Fills the recent activity panel
+    document.getElementById("prevBtn").addEventListener("click", function () {
+        if (currentPage > 0) {
+            loadRecentClaims(user.id, currentPage - 1);
+        }
+    });
 
+    // NEXT BUTTON
+    document.getElementById("nextBtn").addEventListener("click", function () {
+        if (currentPage < totalPages - 1) {
+            loadRecentClaims(user.id, currentPage + 1);
+        }
+    });
     // 5. ATTACH CLAIM FORM SUBMISSION LISTENER
     const claimForm = document.getElementById("claimForm");
     if (claimForm) {
@@ -60,38 +73,48 @@ document.addEventListener("DOMContentLoaded", function () {
 async function fetchDashboardStats(user) {
     try {
         // Fetch claims array for the employee
-        const response = await fetch(`http://localhost:8080/api/claims/employee/${user.id}`);
+        const response = await fetch(`http://localhost:8080/api/claims/employee/${user.id}?page=0&size=1000`);
         const result = await response.json();
 
-        if (response.ok && result.data) {
-            const claims = result.data;
+        const pageData = result.data;
 
-            // Calculate the stats from the claims array
-            const total = claims.length;
-            const pending = claims.filter(c => c.status.toUpperCase() === 'PENDING').length;
-            const approved = claims.filter(c => c.status.toUpperCase() === 'APPROVED').length;
-            const rejected = claims.filter(c => c.status.toUpperCase() === 'REJECTED').length;
+        // IMPORTANT: extract content from Page
+        const claims = Array.isArray(pageData)
+            ? pageData
+            : pageData?.content || [];
 
-            // Update the HTML DOM elements
-            if (document.getElementById("totalClaims")) 
-                document.getElementById("totalClaims").innerText = total;
-            if (document.getElementById("pendingClaims")) 
-                document.getElementById("pendingClaims").innerText = pending;
-            if (document.getElementById("approvedClaims")) 
-                document.getElementById("approvedClaims").innerText = approved;
-            if (document.getElementById("rejectedClaims")) 
-                document.getElementById("rejectedClaims").innerText = rejected;
-        }
+        // Calculate the stats from the claims array
+        const total = claims.length;
+        const submitted = claims.filter(c => c.status.toUpperCase() === 'SUBMITTED').length;
+        const approved = claims.filter(c => c.status.toUpperCase() === 'APPROVED').length;
+        const rejected = claims.filter(c => c.status.toUpperCase() === 'REJECTED').length;
+
+        // Update the HTML DOM elements
+        if (document.getElementById("totalClaims"))
+            document.getElementById("totalClaims").innerText = total;
+        if (document.getElementById("submittedClaims"))
+            document.getElementById("submittedClaims").innerText = submitted;
+        if (document.getElementById("approvedClaims"))
+            document.getElementById("approvedClaims").innerText = approved;
+        if (document.getElementById("rejectedClaims"))
+            document.getElementById("rejectedClaims").innerText = rejected;
+
     } catch (error) {
         console.error("Error fetching or calculating stats:", error);
     }
 }
 
+
 /**
  * Handles the claim submission
  */
+let isSubmitting = false;
 async function submitClaim(user) {
+
+    if (isSubmitting) return;
+    isSubmitting = true;
     const btn = document.getElementById("submitClaimBtn");
+
     const amountVal = document.getElementById("amount").value;
     const dateVal = document.getElementById("date").value;
     const descVal = document.getElementById("description").value;
@@ -99,7 +122,7 @@ async function submitClaim(user) {
     const employeeId = user?.id || localStorage.getItem("userId") || localStorage.getItem("employeeId");
 
     if (!employeeId) {
-        alert("Session expired. Please log in again.");
+        showMessage("Session expired. Please log in again.");
         window.location.href = '../html/index.html';
         return;
     }
@@ -126,9 +149,9 @@ async function submitClaim(user) {
         });
 
         if (res.ok) {
-            alert("Claim Sent!");
+            showMessage("Claim Added!");
             document.getElementById("claimForm").reset();
-            
+
             // Refresh tables after submission
             loadEmployeeClaims();
             if (user && user.id) {
@@ -139,11 +162,11 @@ async function submitClaim(user) {
             }
         } else {
             const errorText = await res.text();
-            alert("Submission failed: " + errorText);
+            showMessage("Submission failed: " + errorText);
         }
     } catch (err) {
         console.error("Fetch error:", err);
-        alert("Server Error: Unable to reach the server.");
+        showMessage("Server Error: Unable to reach the server.");
     } finally {
         if (btn) {
             btn.disabled = false;
@@ -152,16 +175,23 @@ async function submitClaim(user) {
     }
 }
 
-async function loadRecentClaims(userId) {
+async function loadRecentClaims(userId, page = 0) {
     const tableBody = document.getElementById("recentClaimsTableBody");
-    
+
     if (!tableBody) return;
 
     try {
         // Fetch claims for the specific employee
-        const response = await fetch(`http://localhost:8080/api/claims/employee/${userId}`);
+        const response = await fetch(`http://localhost:8080/api/claims/employee/${userId}?page=${page}&size=${pageSize}`);
+
         const apiResponse = await response.json();
-        const claims = apiResponse.data || [];
+
+        const pageData = apiResponse.data;
+        const claims = pageData.content || [];
+
+        currentPage = pageData.number;
+        totalPages = pageData.totalPages;
+
 
         tableBody.innerHTML = "";
 
@@ -170,39 +200,44 @@ async function loadRecentClaims(userId) {
             return;
         }
 
-        // Get the last 5 claims
-        const recentClaims = claims.slice(-5).reverse();
 
-        recentClaims.forEach(claim => {
+
+        claims.forEach(claim => {
             const row = document.createElement("tr");
 
             let statusIcon = '';
             let statusClass = '';
 
-                switch (claim.status.toUpperCase()) {
-                    case 'APPROVED':
-                        statusIcon = '✅';
-                        statusClass = 'status-approved';
-                        break;
-                    case 'REJECTED':
-                        statusIcon = '❌';
-                        statusClass = 'status-rejected';
-                        break;
-                    default: // PENDING or others
-                        statusIcon = '🕒';
-                        statusClass = 'status-pending';
-                        break;
-                }
-            
+            switch (claim.status.toUpperCase()) {
+                case 'APPROVED':
+                    statusIcon = '✅';
+                    statusClass = 'status-approved';
+                    break;
+                case 'REJECTED':
+                    statusIcon = '❌';
+                    statusClass = 'status-rejected';
+                    break;
+                default: // PENDING or others
+                    statusIcon = '🕒';
+                    statusClass = 'status-pending';
+                    break;
+            }
+
 
             row.innerHTML = `
-                <td>#${claim.id}</td>
+                <td>${claim.id}</td>
                 <td>₹${claim.amount}</td>
-                <td><span class="status-badge ${statusClass}">${statusIcon}${claim.status}</span></td>
+                <td>${claim.claimDate}</td>
                 <td>${claim.description || 'N/A'}</td>
+                <td><span class="status-badge ${statusClass}">${statusIcon}${claim.status}</span></td>
+                <td>${claim.comment || '-'}</td>
             `;
             tableBody.appendChild(row);
         });
+        const pageInfo = document.getElementById("pageInfo");
+        if (pageInfo) {
+            pageInfo.innerText = `Page ${currentPage + 1} / ${totalPages}`;
+        }
 
     } catch (error) {
         console.error("Error fetching recent claims:", error);
@@ -210,15 +245,15 @@ async function loadRecentClaims(userId) {
     }
 }
 async function loadEmployeeClaims() {
-    const employeeId = localStorage.getItem("userId") || localStorage.getItem("employeeId");
+    const user = JSON.parse(localStorage.getItem("user"));
 
     try {
-        const response = await fetch(`http://localhost:8080/api/claims/employee/${Id}`);
+        const response = await fetch(`http://localhost:8080/api/claims/employee/${user.id}`);
         const apiResponse = await response.json();
         const claims = apiResponse.data || [];
 
         const tableBody = document.getElementById("claimsTableBody");
-        
+
         if (tableBody) {
             tableBody.innerHTML = "";
 
@@ -230,7 +265,7 @@ async function loadEmployeeClaims() {
             claims.forEach(claim => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>#${claim.id}</td>
+                    <td>${claim.id}</td>
                     <td>$${claim.amount}</td>
                     <td>${claim.status}</td>
                     <td>${claim.description}</td>
@@ -245,4 +280,25 @@ async function loadEmployeeClaims() {
             tableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load recent activity.</td></tr>`;
         }
     }
+}
+function showMessage(message, type = "success") {
+
+    let container = document.getElementById("toastContainer");
+
+    // create container if not exists
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toastContainer";
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.innerText = message;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
 }

@@ -13,54 +13,64 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <div class="logo">
-                <div class="logo-icon"> <img
-                        src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3"
-                        alt="logo" width="50"></div>
+                <div class="logo-icon">
+                    <img src="https://tse2.mm.bing.net/th/id/OIP.LcdIUlNxbbbgvux_BjLvFgAAAA?pid=ImgDet&w=181&h=181&c=7&dpr=1.3&o=7&rm=3"
+                        alt="logo" width="50">
+                </div>
                 <span>Reimbursement<br><small>Portal</small></span>
             </div>
             <ul class="nav-links">
-                <li><a href="employee.html">🏠 Dashboard</a></li>
+                <li><a href="employee.html" id="dashboardLink" class="dashboardLink">🏠 Dashboard</a></li>
                 <li class="active"><a href="profile.html">👤 Profile</a></li>
             </ul>
             <div class="logout-section">
-                <a href="#" id="logoutBtn" class="logout-btn">Logout</a>
+                <a href="index.html" id="logoutBtn" class="logout-btn">Logout</a>
             </div>
         </aside>
 
         <main class="main-content">
-            <header class="top-header">
-                <h2>Account Settings</h2>
-            </header>
+            <div class="profile-wrapper">
 
-            <div class="profile-card table-card">
-                <div class="profile-header">
-                    <div class="big-avatar">👤</div>
-                    <div class="profile-intro">
-                        <h3 id="displayFullName">Loading...</h3>
-                        <p id="displayUserRole">Role</p>
+                <div class="page-header-action">
+                    <div class="header-left">
+                        <h2>Account</h2>
+                    </div>
+                    <a href="#" id="backBtn" class="btn-secondary">
+                        &larr; Back
+                    </a>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="big-avatar">👤</div>
+                        <div class="profile-intro">
+                            <h3 id="displayFullName">Loading...</h3>
+                            <p id="displayUserRole">Employee Role</p>
+                        </div>
+                    </div>
+
+                    <hr class="profile-divider">
+
+                    <div class="profile-details">
+                        <div class="info-group">
+                            <label>Full Name</label>
+                            <p id="infoName">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Email Address</label>
+                            <p id="infoEmail">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Assigned Role</label>
+                            <p id="infoRole">-</p>
+                        </div>
+                        <div class="info-group">
+                            <label>Employee ID</label>
+                            <p id="infoID">-</p>
+                        </div>
                     </div>
                 </div>
 
-                <hr style="margin: 25px 0; border: 0; border-top: 1px solid var(--border);">
-
-                <div class="profile-details">
-                    <div class="info-group">
-                        <label>Full Name</label>
-                        <p id="infoName">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Email Address</label>
-                        <p id="infoEmail">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Assigned Role</label>
-                        <p id="infoRole">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Employee ID</label>
-                        <p id="infoID">-</p>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
