@@ -88,7 +88,7 @@ Employee → Submit Claim → System Routes → Manager/Admin Review → Approve
 
 ---
 
-# 3. 🏗 System Architecture
+# 3. System Architecture
 
 ```
 Frontend (HTML/JS/CSS)
@@ -443,4 +443,5 @@ Run command:
 
 # 15. 📌 Conclusion
 
-The Reimbursement Portal provides a scalable backend system demonstrating enterprise-level Spring Boot architecture with proper workflow, security, and modular design.
+The Reimbursement Portal is a Spring Boot-based backend system that efficiently manages employee claims through a secure, role-based workflow. It follows a layered architecture with proper use of REST APIs, JPA, validation, and exception handling, ensuring scalability, maintainability, and clean system design.
+
