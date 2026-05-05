@@ -77,7 +77,7 @@ function loadAdminClaims() {
         })
         .catch(err => console.error("Admin claims error:", err));
 }
-// 🔽 Load claims assigned to manager
+// Load claims assigned to manager
 function loadClaims(managerId) {
 
     fetch(`${BASE_URL}/claims/manager/${managerId}/pending`)
@@ -120,7 +120,7 @@ function loadClaims(managerId) {
 let selectedClaimId = null;
 let selectedAction = null;
 
-// 🔽 Open modal
+// Open modal
 function openModal(claimId, action) {
 
     selectedClaimId = claimId;
@@ -133,12 +133,12 @@ function openModal(claimId, action) {
     document.getElementById("reviewComment").value = "";
 }
 
-// 🔽 Close modal
+// Close modal
 function closeModal() {
     document.getElementById("actionModal").style.display = "none";
 }
 
-// 🔽 Submit review
+//Submit review
 function submitReview(event) {
     event.preventDefault();
 
@@ -171,7 +171,6 @@ function submitReview(event) {
 
             closeModal();
 
-            // ✅ FULL PAGE RELOAD (your requirement)
             setTimeout(() => {
                 location.reload();
             }, 800); // small delay so toast is visible

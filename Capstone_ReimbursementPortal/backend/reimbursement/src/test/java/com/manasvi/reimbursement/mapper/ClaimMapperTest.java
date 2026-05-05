@@ -6,7 +6,9 @@ import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.enums.ClaimStatus;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClaimMapperTest {
 

@@ -1,8 +1,9 @@
 package com.manasvi.reimbursement.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.*;
 
-import com.manasvi.reimbursement.dto.Request.UserRequest;
+import com.manasvi.reimbursement.dto.Request.*;
 import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.enums.Role;
 import com.manasvi.reimbursement.exception.ResourceNotFoundException;
@@ -41,17 +42,55 @@ class UserServiceTest {
                 user = new User();
                 user.setId(1L);
                 user.setName("Manasvi");
-                user.setEmail("manasvi@company.com"); // ✅ FIXED
+                user.setEmail("manasvi@company.com");
                 user.setPassword("1234");
                 user.setRole(Role.EMPLOYEE);
 
                 request = new UserRequest();
                 request.setName("Manasvi");
-                request.setEmail("manasvi@company.com"); // ✅ FIXED
+                request.setEmail("manasvi@company.com");
                 request.setPassword("1234");
                 request.setRole(Role.EMPLOYEE);
         }
 
+        @Test
+        void login_success() {
+                user.setPassword("encoded");
+
+                LoginRequest login = new LoginRequest();
+                login.setEmail("manasvi@company.com");
+                login.setPassword("1234");
+
+                when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+                when(passwordEncoder.matches(any(), any())).thenReturn(true);
+
+                assertDoesNotThrow(() -> userService.login(login));
+        }
+
+        @Test
+        void login_wrongPassword() {
+                LoginRequest login = new LoginRequest();
+                login.setEmail("manasvi@company.com");
+                login.setPassword("1234");
+
+                when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+                when(passwordEncoder.matches(any(), any())).thenReturn(false);
+
+                assertThrows(ValidationException.class,
+                                () -> userService.login(login));
+        }
+
+        @Test
+        void login_userNotFound() {
+                LoginRequest login = new LoginRequest();
+                login.setEmail("manasvi@company.com");
+                login.setPassword("1234");
+
+                when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+
+                assertThrows(ResourceNotFoundException.class,
+                                () -> userService.login(login));
+        }
         // ================= CREATE =================
 
         @Test
@@ -65,13 +104,13 @@ class UserServiceTest {
         void createUser_invalidName() {
                 request.setName("");
 
-                assertThrows(Exception.class, // ✅ accept NPE or ValidationException
+                assertThrows(Exception.class,
                                 () -> userService.createUser(request));
         }
 
         @Test
         void createUser_invalidDomain() {
-                request.setEmail("abc@gmail.com"); // ❌ wrong domain
+                request.setEmail("abc@gmail.com");
 
                 assertThrows(ValidationException.class,
                                 () -> userService.createUser(request));
@@ -134,5 +173,44 @@ class UserServiceTest {
 
                 assertThrows(ResourceNotFoundException.class,
                                 () -> userService.deleteUser(1L));
+        }
+
+        @Test
+        void assignManager_sameId() {
+                assertThrows(ValidationException.class,
+                                () -> userService.assignManager(1L, 1L));
+
+        }
+
+        @Test
+        void assignManager_invalidManagerRole() {
+
+                User emp = new User();
+                emp.setRole(Role.EMPLOYEE);
+
+                User mgr = new User();
+                mgr.setRole(Role.EMPLOYEE);
+
+                when(userRepository.findById(1L)).thenReturn(Optional.of(emp));
+                when(userRepository.findById(2L)).thenReturn(Optional.of(mgr));
+
+                assertThrows(ValidationException.class,
+                                () -> userService.assignManager(1L, 2L));
+        }
+
+        @Test
+        void assignManager_employeeInvalidRole() {
+
+                User emp = new User();
+                emp.setRole(Role.MANAGER);
+
+                User mgr = new User();
+                mgr.setRole(Role.MANAGER);
+
+                when(userRepository.findById(1L)).thenReturn(Optional.of(emp));
+                when(userRepository.findById(2L)).thenReturn(Optional.of(mgr));
+
+                assertThrows(ValidationException.class,
+                                () -> userService.assignManager(1L, 2L));
         }
 }

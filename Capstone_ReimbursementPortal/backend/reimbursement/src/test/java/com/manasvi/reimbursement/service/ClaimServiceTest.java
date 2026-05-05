@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.Optional;
-
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,7 @@ class ClaimServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Inject the mapper using reflection to avoid Mockito proxy constraints
+
         Field mapperField = ClaimService.class.getDeclaredField("claimMapper");
         mapperField.setAccessible(true);
         mapperField.set(claimService, claimMapper);
@@ -109,11 +109,43 @@ class ClaimServiceTest {
     }
 
     @Test
+    void createClaim_SaveReturnsNull() {
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
+        when(claimRepository.save(any(Claim.class))).thenReturn(null);
+
+        assertThrows(NullPointerException.class,
+                () -> claimService.createClaim(claimRequest));
+    }
+
+    @Test
     void createClaim_BlankDescription() {
         claimRequest.setDescription("");
         when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
 
         assertThrows(ValidationException.class, () -> claimService.createClaim(claimRequest));
+    }
+
+    @Test
+    void createClaim_adminFallback_test() {
+
+        User employee = new User();
+        employee.setId(1L);
+        employee.setManager(null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
+
+        User admin = new User();
+        admin.setId(99L);
+
+        when(userRepository.findByRole(Role.ADMIN))
+                .thenReturn(Arrays.asList(admin));
+
+        when(claimRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        ClaimResponse res = claimService.createClaim(claimRequest);
+
+        assertNotNull(res);
     }
 
     @Test
@@ -142,5 +174,14 @@ class ClaimServiceTest {
         when(claimRepository.findById(100L)).thenReturn(Optional.of(claim));
 
         assertThrows(ValidationException.class, () -> claimService.takeActionClaim(100L, "", ClaimStatus.REJECTED));
+    }
+
+    @Test
+    void takeActionClaim_ClaimNotFound() {
+
+        when(claimRepository.findById(100L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> claimService.takeActionClaim(100L, "Approved", ClaimStatus.APPROVED));
     }
 }

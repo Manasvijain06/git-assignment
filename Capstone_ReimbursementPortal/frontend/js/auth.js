@@ -76,7 +76,7 @@ if (loginForm) {
     });
 }
 
-// Signup Logic
+// -----------------Signup Logic---------------------
 const signupForm = document.getElementById("signupForm");
 if (signupForm) {
     signupForm.addEventListener("submit", async function (e) {
@@ -126,6 +126,7 @@ if (signupForm) {
     });
 
 }
+/*--------------------------Show message-------------------------- */
 function showMessage(message, type = "success") {
 
     let container = document.getElementById("toastContainer");
