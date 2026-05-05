@@ -1,0 +1,401 @@
+{
+  "info": {
+    "_postman_id": "ed40de11-8446-4837-b659-65d16c378913",
+    "name": "Reimbursement_Portal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "37345948"
+  },
+  "item": [
+    {
+      "name": "User API",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Employee\",\r\n  \"email\": \"employee@company.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"EMPLOYEE\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All User",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Employee\",\r\n  \"email\": \"employee@company.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"EMPLOYEE\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User By Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Employee\",\r\n  \"email\": \"employee@company.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"EMPLOYEE\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users/20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users",
+                "20"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Claim API",
+      "item": [
+        {
+          "name": "Create Claim",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"employeeId\": 5,\r\n  \"description\": \"Hospital bill reimbursement\",\r\n  \"amount\": 2500,\r\n  \"claimDate\": \"2026-05-05\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/claims",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Claims",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"employeeId\": 5,\r\n  \"description\": \"Hospital bill reimbursement\",\r\n  \"amount\": 2500,\r\n  \"claimDate\": \"2026-05-05\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/claims",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Claim By Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"employeeId\": 5,\r\n  \"description\": \"Hospital bill reimbursement\",\r\n  \"amount\": 2500,\r\n  \"claimDate\": \"2026-05-05\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/claims/41",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "41"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Claim by page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/claims?page=0&size=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get claim By Emp Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"employeeId\": 5,\r\n  \"description\": \"Hospital bill reimbursement\",\r\n  \"amount\": 2500,\r\n  \"claimDate\": \"2026-05-05\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/claims/employee/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "employee",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pending claims",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/claims/pending",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Claim By Manager Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/claims/manager/3?page=0&size=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "manager",
+                "3"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pending claim by manager",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/claims/manager/3/pending",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "manager",
+                "3",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin pending claims",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/claims/admin/pending",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "admin",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Claim Action",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"comment\": \"Approved after verification\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/claims/41/approve",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "claims",
+                "41",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
