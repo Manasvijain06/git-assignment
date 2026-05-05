@@ -1,14 +1,17 @@
 package com.manasvi.reimbursement.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.stereotype.Service;
 
 import com.manasvi.reimbursement.dto.Request.ClaimRequest;
+import com.manasvi.reimbursement.dto.Response.ClaimResponse;
 import com.manasvi.reimbursement.entity.Claim;
 import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.enums.ClaimStatus;
@@ -26,7 +29,7 @@ import com.manasvi.reimbursement.repository.UserRepository;
 @Service
 public class ClaimService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClaimService.class);
+    private static final Logger log = LoggerFactory.getLogger(ClaimService.class);
 
     private final ClaimRepository claimRepository;
     private final UserRepository userRepository;
@@ -42,144 +45,145 @@ public class ClaimService {
 
     /**
      * Create a claim
-     * 
-     * @param request
-     * @return
      */
-    public Claim createClaim(ClaimRequest request) {
+    public ClaimResponse createClaim(ClaimRequest request) {
 
-        logger.info("Employee {} submitting claim for amount: {}");
-        /**
-         * Fetch employee
-         */
+        log.debug("Creating claim for employeeId: {}", request.getEmployeeId());
+
         User employee = userRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-        /**
-         * Amount must be positive
-         */
-        if (request.getAmount() <= 0) {
-            throw new ValidationException("Amount must be greater than 0");
-        }
-
-        /**
-         * Amount should be less than a limit
-         */
-        if (request.getAmount() > 10000) {
+        if (request.getAmount() == null || request.getAmount() <= 0) {
             throw new ValidationException("Amount exceeds allowed limit");
         }
 
-        Claim claim = claimMapper.toEntity(request, employee);
-
-        /**
-         * Assign reviewer
-         */
-        User reviewer;
-
-        if (employee.getManager() != null) {
-            reviewer = employee.getManager();
-        } else {
-            List<User> admins = userRepository.findByRole(Role.ADMIN);
-
-            if (admins.isEmpty()) {
-                throw new ValidationException("No admin found");
-            }
-            reviewer = admins.get(0);
+        if (request.getDescription() == null || request.getDescription().isBlank()) {
+            throw new ValidationException("Description is required");
         }
 
+        // Explicitly set the relationships to prevent NullPointerExceptions during
+        Claim claim = new Claim();
+        claim.setAmount(request.getAmount());
+        claim.setDescription(request.getDescription());
+        claim.setClaimDate(request.getClaimDate());
+        claim.setEmployee(employee);
+        claim.setStatus(ClaimStatus.SUBMITTED);
+
+        User reviewer;
+        /**
+         * manager approves
+         */
+        if (employee.getManager() != null) {
+            reviewer = employee.getManager();
+        }
+        /**
+         * fallback admin
+         */
+        else {
+            reviewer = getAdminUser();
+        }
         claim.setReviewer(reviewer);
+        Claim saved = claimRepository.save(claim);
+        return claimMapper.toResponse(saved);
+    }
 
-        Claim savedClaim = claimRepository.save(claim);
-
-        logger.info("Claim assigned to reviewer: {}", savedClaim.getId());
-
-        return savedClaim;
+    private User getAdminUser() {
+        return userRepository.findByRole(Role.ADMIN)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
     }
 
     /**
      * Get Claim by ID
      * 
-     * @param id
+     * @param id the claim ID
      * @return
      */
-    public Claim getById(Long id) {
-        logger.info("Fetching claim with ID: {}", id);
-        return claimRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Claim not found"));
+    public ClaimResponse getById(Long id) {
+        return claimMapper.toResponse(
+                claimRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Claim not found")));
     }
 
     /**
      * Get Claims by Employee
      * 
      * @param employeeId
-     * @param pageable
      * @return
      */
-    public Page<Claim> getClaimsByEmployee(Long employeeId, Pageable pageable) {
-        return claimRepository.findByEmployeeId(employeeId, pageable);
+    // EMPLOYEE CLAIMS
+    public Page<ClaimResponse> getClaimsByEmployeeId(Long employeeId, Pageable pageable) {
+        return claimRepository.findByEmployeeId(employeeId, pageable)
+                .map(claimMapper::toResponse);
     }
 
     /**
-     * Get all claims (paginated)
+     * Get all claims
      * 
      * @param pageable
      * @return
      */
-    public Page<Claim> getAllClaims(Pageable pageable) {
 
-        logger.info("Fetching all claims");
+    public Page<ClaimResponse> getAllClaims(Pageable pageable) {
+        return claimRepository.findAll(pageable)
+                .map(claimMapper::toResponse);
+    }
 
-        return claimRepository.findAll(pageable);
+    public Page<ClaimResponse> getClaimsByManager(Long managerId, Pageable pageable) {
+        return claimRepository.findByEmployee_Manager_Id(managerId, pageable)
+                .map(claimMapper::toResponse);
+    }
+
+    public List<ClaimResponse> getPendingClaimsByManager(Long managerId) {
+        return claimRepository.findByEmployee_Manager_IdAndStatus(managerId, ClaimStatus.SUBMITTED)
+                .stream()
+                .map(claimMapper::toResponse)
+                .toList();
     }
 
     /**
-     * Approve claim
-     * 
-     * @param id
-     * @param reviewerId
-     * @param comment
-     * @return
+     * Retrieves all pending claims (SUBMITTED) and maps them to the response DTO
      */
-    public Claim approveClaim(Long id, Long reviewerId, String comment) {
-        Claim claim = getById(id);
-
-        if (claim.getStatus() != ClaimStatus.SUBMITTED) {
-            throw new ValidationException("Only submitted claims can be approved");
-        }
-        User reviewer = userRepository.findById(reviewerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reviewer not found"));
-
-        claim.setStatus(ClaimStatus.APPROVED);
-        claim.setReviewer(reviewer);
-        claim.setComment(comment);
-        logger.info("Claim {} approved by reviewer {}", id, reviewerId);
-
-        return claimRepository.save(claim);
+    public List<ClaimResponse> getPendingClaims() {
+        return claimRepository.findByStatus(ClaimStatus.SUBMITTED)
+                .stream()
+                .map(claimMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     /**
-     * Reject claim
+     * Take action (approve/reject) on a claim.
+     * * @param claimId the claim ID.
      * 
-     * @param id
-     * @param reviewerId
-     * @param comment
-     * @return
+     * @param comment the comment for the action.
+     * @param status  the new claim status.
+     * @return the updated ClaimResponse DTO.
      */
-    public Claim rejectClaim(Long id, Long reviewerId, String comment) {
-        Claim claim = getById(id);
+    public ClaimResponse takeActionClaim(Long claimId, String comment, ClaimStatus status) {
+
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> new ResourceNotFoundException("Claim not found with ID: " + claimId));
 
         if (claim.getStatus() != ClaimStatus.SUBMITTED) {
-            throw new ValidationException("Only submitted claims can be rejected. Current status:" + claim.getStatus());
+            throw new ValidationException("Claim already processed");
+        }
+        if (claim.getReviewer() == null) {
+            throw new ResourceNotFoundException("No reviewer assigned");
         }
 
-        User reviewer = userRepository.findById(reviewerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reviewer not found"));
+        // rejection comment mandatory
+        if (status == ClaimStatus.REJECTED &&
+                (comment == null || comment.isBlank())) {
+            throw new ValidationException("Comment required for rejection");
+        }
 
-        claim.setStatus(ClaimStatus.REJECTED);
-        claim.setReviewer(reviewer);
+        claim.setStatus(status);
         claim.setComment(comment);
-        logger.info("Claim {} rejected by reviewer {}", id, reviewerId);
 
-        return claimRepository.save(claim);
+        Claim saved = claimRepository.save(claim);
+
+        return claimMapper.toResponse(saved);
     }
+
 }

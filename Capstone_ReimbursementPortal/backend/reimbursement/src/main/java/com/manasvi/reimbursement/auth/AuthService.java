@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.manasvi.reimbursement.dto.Request.LoginRequest;
 import com.manasvi.reimbursement.dto.Response.UserResponse;
 import com.manasvi.reimbursement.entity.User;
+import com.manasvi.reimbursement.exception.ResourceNotFoundException;
+import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.mapper.UserMapper;
 import com.manasvi.reimbursement.repository.UserRepository;
 
@@ -24,12 +26,12 @@ public class AuthService {
     public UserResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found" + request.getEmail()));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new ValidationException("Invalid password");
         }
-
         return UserMapper.toResponse(user);
     }
+
 }

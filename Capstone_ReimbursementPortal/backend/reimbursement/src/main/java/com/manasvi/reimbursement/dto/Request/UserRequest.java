@@ -27,7 +27,9 @@ public class UserRequest {
     @NotNull(message = "Role is required")
     private Role role;
 
-    // All getters
+    public UserRequest() {
+    }
+
     public String getName() {
         return name;
     }
@@ -44,7 +46,6 @@ public class UserRequest {
         return role;
     }
 
-    // All setters
     public void setName(String name) {
         this.name = name;
     }

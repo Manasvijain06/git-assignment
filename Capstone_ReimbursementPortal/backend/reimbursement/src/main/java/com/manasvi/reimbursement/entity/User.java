@@ -1,10 +1,21 @@
 package com.manasvi.reimbursement.entity;
 
-import java.time.*;
+import java.time.LocalDateTime;
 
-import com.manasvi.reimbursement.enums.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.manasvi.reimbursement.enums.Role;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 /**
  * Entity representing a system user.
@@ -37,34 +48,37 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "manager_id")
+    @JsonIgnoreProperties({ "password", "email", "manager" })
     private User manager;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public User() {
+    }
+
     @PrePersist
-    public final void prePersist() {
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters
-    public final Long getId() {
+    public Long getId() {
         return id;
     }
 
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
-    public final String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public final String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public final Role getRole() {
+    public Role getRole() {
         return role;
     }
 
@@ -72,36 +86,35 @@ public class User {
         return manager;
     }
 
-    public final LocalDateTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    // Setters
-    public final void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public final void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public final void setEmail(final String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public final void setPassword(final String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public final void setRole(final Role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public final void setManager(final User manager) {
+    public void setManager(User manager) {
         this.manager = manager;
     }
 
-    public final void setCreatedAt(final LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 }

@@ -12,10 +12,13 @@ import com.manasvi.reimbursement.dto.Request.LoginRequest;
 import com.manasvi.reimbursement.dto.Request.UserRequest;
 import com.manasvi.reimbursement.dto.Response.UserResponse;
 import com.manasvi.reimbursement.entity.User;
+import com.manasvi.reimbursement.enums.Role;
 import com.manasvi.reimbursement.exception.ResourceNotFoundException;
 import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.mapper.UserMapper;
 import com.manasvi.reimbursement.repository.UserRepository;
+
+import jakarta.transaction.*;
 
 /**
  * Service Layer for handling User related Business logic .
@@ -45,12 +48,28 @@ public class UserService {
     }
 
     /**
+     * Login
+     * 
+     * @param dto
+     * @return
+     */
+    public UserResponse login(LoginRequest dto) {
+
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new ValidationException("Invalid credentials");
+        }
+        return UserMapper.toResponse(user);
+    }
+
+    /**
      * Create a new user in the system.
      * Validates that the email belongs to the allowed company domain
      * and that the email is not already registered.
      */
-    public UserResponse createUser(final UserRequest request) {
-        logger.info("Creating user with email:{}", request.getEmail());
+    public UserResponse createUser(UserRequest request) {
 
         /**
          * Email domain validation
@@ -83,7 +102,8 @@ public class UserService {
      */
 
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream()
+        return userRepository.findAll()
+                .stream()
                 .map(UserMapper::toResponse)
                 .collect(Collectors.toList());
     }
@@ -92,7 +112,7 @@ public class UserService {
      * Retrieves user by their ID.
      */
 
-    public UserResponse getUserById(final Long id) {
+    public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID:" + id));
         return UserMapper.toResponse(user);
@@ -101,9 +121,7 @@ public class UserService {
     /**
      * Delete User
      */
-    public void deleteUser(final Long id) {
-        logger.info("Deactivating user with ID:{]", id);
-
+    public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
         userRepository.delete(user);
@@ -115,7 +133,11 @@ public class UserService {
      * @param employeeId
      * @param managerId
      */
-    public void assignManager(final Long employeeId, final Long managerId) {
+    @Transactional
+    public User assignManager(Long employeeId, Long managerId) {
+        if (employeeId.equals(managerId)) {
+            throw new ValidationException("An employee cannot be assigned as their own manager.");
+        }
 
         User employee = userRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
@@ -123,24 +145,16 @@ public class UserService {
         User manager = userRepository.findById(managerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Manager not found"));
 
-        employee.setManager(manager);
-        userRepository.save(employee);
-    }
-
-    /**
-     * Login
-     * 
-     * @param dto
-     * @return
-     */
-    public UserResponse login(final LoginRequest dto) {
-
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new ValidationException("Invalid credentials");
+        if (manager.getRole() != Role.MANAGER) {
+            throw new ValidationException("Selected user is not a manager");
         }
-        return UserMapper.toResponse(user);
+
+        if (employee.getRole() != Role.EMPLOYEE) {
+            throw new ValidationException("Only employee can be assigned manager");
+        }
+
+        employee.setManager(manager);
+        return userRepository.save(employee);
     }
+
 }

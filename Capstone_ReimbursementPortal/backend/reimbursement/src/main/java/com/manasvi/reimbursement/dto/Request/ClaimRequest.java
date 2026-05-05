@@ -2,10 +2,10 @@ package com.manasvi.reimbursement.dto.Request;
 
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 /**
  * DTO for claim submission request.
@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Positive;
 
 public class ClaimRequest {
 
-    @NotNull(message = "EmployeeId is required")
     private Long employeeId;
 
     @NotNull(message = "Amount is required")
@@ -27,7 +26,9 @@ public class ClaimRequest {
     @NotNull(message = "Claim date is required")
     private LocalDate claimDate;
 
-    // Getters
+    public ClaimRequest() {
+    }
+
     public Long getEmployeeId() {
         return employeeId;
     }
@@ -44,7 +45,6 @@ public class ClaimRequest {
         return claimDate;
     }
 
-    // Setters
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }

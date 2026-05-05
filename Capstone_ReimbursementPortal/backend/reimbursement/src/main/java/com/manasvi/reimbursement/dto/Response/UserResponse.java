@@ -10,11 +10,20 @@ public class UserResponse {
     private String name;
     private String email;
     private String role;
+    private Long managerId;
+    private String managerName;
 
     public UserResponse() {
     }
 
-    // All getters
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public String getManagerName() {
+        return managerName;
+    }
+
     public Long getId() {
         return id;
     }
@@ -31,7 +40,6 @@ public class UserResponse {
         return role;
     }
 
-    // All setters
     public void setId(Long id) {
         this.id = id;
     }
@@ -46,6 +54,14 @@ public class UserResponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
+    }
+
+    public void setManagerName(String managerName) {
+        this.managerName = managerName;
     }
 
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.manasvi.reimbursement.entity.User;
-import com.manasvi.reimbursement.enums.*;
+import com.manasvi.reimbursement.enums.Role;
 
 /**
  * Repository interface for User entity.
@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByRole(Role role);
 
     List<User> findByManagerId(Long managerId);
+
+    boolean existsByManagerId(Long managerId);
+
 }

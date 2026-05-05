@@ -1,30 +1,33 @@
 package com.manasvi.reimbursement.service;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.manasvi.reimbursement.dto.Request.ClaimRequest;
+import com.manasvi.reimbursement.dto.Response.ClaimResponse;
 import com.manasvi.reimbursement.entity.Claim;
 import com.manasvi.reimbursement.entity.User;
 import com.manasvi.reimbursement.enums.ClaimStatus;
 import com.manasvi.reimbursement.enums.Role;
+import com.manasvi.reimbursement.exception.ResourceNotFoundException;
 import com.manasvi.reimbursement.exception.ValidationException;
 import com.manasvi.reimbursement.mapper.ClaimMapper;
 import com.manasvi.reimbursement.repository.ClaimRepository;
 import com.manasvi.reimbursement.repository.UserRepository;
 
+@ExtendWith(MockitoExtension.class)
 class ClaimServiceTest {
 
     @Mock
@@ -33,152 +36,111 @@ class ClaimServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    private ClaimMapper claimMapper = new ClaimMapper();
+    // Standard concrete instance. Bypasses Mockito's proxy/inlining issues.
+    private final ClaimMapper claimMapper = new ClaimMapper();
 
     @InjectMocks
     private ClaimService claimService;
 
+    private User employee;
+    private User manager;
+    private ClaimRequest claimRequest;
+    private Claim claim;
+
     @BeforeEach
-    void setup() {
-        MockitoAnnotations.openMocks(this);
-        claimMapper = new ClaimMapper();
-        claimService = new ClaimService(claimRepository, userRepository, claimMapper);
-    }
+    void setUp() throws Exception {
+        // Inject the mapper using reflection to avoid Mockito proxy constraints
+        Field mapperField = ClaimService.class.getDeclaredField("claimMapper");
+        mapperField.setAccessible(true);
+        mapperField.set(claimService, claimMapper);
 
-    /**
-     * CLAIM SUCCESS
-     */
-    @Test
-    void createClaim_success() {
+        employee = new User();
+        employee.setId(1L);
+        employee.setName("Manasvi Jain");
+        employee.setRole(Role.EMPLOYEE);
 
-        ClaimRequest request = createRequest(1L, 500.0);
-
-        User employee = createEmployee(1L);
-        User manager = createManager(2L);
-
+        manager = new User();
+        manager.setId(2L);
+        manager.setName("Manan Jain");
         employee.setManager(manager);
 
-        Claim claim = new Claim();
+        claimRequest = new ClaimRequest();
+        claimRequest.setEmployeeId(1L);
+        claimRequest.setAmount(500.0);
+        claimRequest.setDescription("Travel expenses");
+        claimRequest.setClaimDate(LocalDate.now());
 
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(employee));
-
-        when(claimRepository.save(any()))
-                .thenReturn(claim);
-
-        Claim result = claimService.createClaim(request);
-
-        assertNotNull(result);
-        verify(claimRepository).save(any());
+        claim = new Claim();
+        claim.setId(100L);
+        claim.setAmount(500.0);
+        claim.setDescription("Travel expenses");
+        claim.setClaimDate(LocalDate.now());
+        claim.setStatus(ClaimStatus.SUBMITTED);
+        claim.setEmployee(employee);
+        claim.setReviewer(manager);
     }
 
-    /**
-     * INVALID AMOUNT
-     */
     @Test
-    void createClaim_invalidAmount() {
+    void createClaim_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
+        when(claimRepository.save(any(Claim.class))).thenReturn(claim);
 
-        ClaimRequest request = createRequest(1L, -100.0);
-        User employee = createEmployee(1L);
+        ClaimResponse response = claimService.createClaim(claimRequest);
 
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(employee));
+        assertNotNull(response);
+        assertEquals(100L, response.getId());
+        assertEquals("Travel expenses", response.getDescription());
+        verify(claimRepository, times(1)).save(any(Claim.class));
+    }
+
+    @Test
+    void createClaim_EmployeeNotFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> claimService.createClaim(claimRequest));
+    }
+
+    @Test
+    void createClaim_InvalidAmount() {
+        claimRequest.setAmount(-10.0);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
+
+        assertThrows(ValidationException.class, () -> claimService.createClaim(claimRequest));
+    }
+
+    @Test
+    void createClaim_BlankDescription() {
+        claimRequest.setDescription("");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(employee));
+
+        assertThrows(ValidationException.class, () -> claimService.createClaim(claimRequest));
+    }
+
+    @Test
+    void takeActionClaim_Success() {
+        when(claimRepository.findById(100L)).thenReturn(Optional.of(claim));
+        when(claimRepository.save(any(Claim.class))).thenReturn(claim);
+
+        ClaimResponse response = claimService.takeActionClaim(100L, "Approved", ClaimStatus.APPROVED);
+
+        assertNotNull(response);
+        assertEquals(ClaimStatus.APPROVED, response.getStatus());
+        verify(claimRepository, times(1)).save(claim);
+    }
+
+    @Test
+    void takeActionClaim_AlreadyProcessed() {
+        claim.setStatus(ClaimStatus.APPROVED);
+        when(claimRepository.findById(100L)).thenReturn(Optional.of(claim));
 
         assertThrows(ValidationException.class,
-                () -> claimService.createClaim(request));
+                () -> claimService.takeActionClaim(100L, "Duplicate Action", ClaimStatus.APPROVED));
     }
 
-    /**
-     * NO ADMIN
-     */
     @Test
-    void createClaim_noAdmin() {
+    void takeActionClaim_RejectionCommentRequired() {
+        when(claimRepository.findById(100L)).thenReturn(Optional.of(claim));
 
-        ClaimRequest request = createRequest(1L, 500.0);
-        User employee = createEmployee(1L);
-
-        employee.setManager(null);
-
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(employee));
-
-        when(userRepository.findByRole(Role.ADMIN))
-                .thenReturn(Collections.emptyList());
-
-        assertThrows(ValidationException.class,
-                () -> claimService.createClaim(request));
-    }
-
-    /**
-     * APPROVE UNAUTHORIZED
-     */
-    @Test
-    void approveClaim_unauthorized() {
-
-        Claim claim = new Claim();
-        User reviewer = createUser(2L);
-
-        claim.setReviewer(reviewer);
-        claim.setStatus(ClaimStatus.SUBMITTED);
-
-        when(claimRepository.findById(1L))
-                .thenReturn(Optional.of(claim));
-
-        assertThrows(RuntimeException.class,
-                () -> claimService.approveClaim(1L, 99L, "ok"));
-    }
-
-    /**
-     * APPROVE SUCCESS
-     */
-    @Test
-    void approveClaim_success() {
-
-        Claim claim = new Claim();
-        User reviewer = createUser(2L);
-
-        claim.setReviewer(reviewer);
-        claim.setStatus(ClaimStatus.SUBMITTED);
-
-        when(userRepository.findById(2L))
-                .thenReturn(Optional.of(reviewer));
-
-        when(claimRepository.findById(1L))
-                .thenReturn(Optional.of(claim));
-
-        claimService.approveClaim(1L, 2L, "Approved");
-
-        assertEquals(ClaimStatus.APPROVED, claim.getStatus());
-    }
-
-    /**
-     * HELPER METHODS
-     */
-
-    private ClaimRequest createRequest(Long empId, Double amount) {
-        ClaimRequest req = new ClaimRequest();
-        req.setEmployeeId(empId);
-        req.setAmount(amount);
-        return req;
-    }
-
-    private User createEmployee(Long id) {
-        User user = new User();
-        user.setId(id);
-        user.setRole(Role.EMPLOYEE);
-        return user;
-    }
-
-    private User createManager(Long id) {
-        User user = new User();
-        user.setId(id);
-        user.setRole(Role.MANAGER);
-        return user;
-    }
-
-    private User createUser(Long id) {
-        User user = new User();
-        user.setId(id);
-        return user;
+        assertThrows(ValidationException.class, () -> claimService.takeActionClaim(100L, "", ClaimStatus.REJECTED));
     }
 }
